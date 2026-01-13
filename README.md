@@ -1,38 +1,58 @@
-<h1 align="center">Hi 👋, I'm Karunya Muddana</h1>
+<h1 align="center">Hi, I'm Karunya Muddana 👋</h1>
 
 <p align="center">
-  <a href="https://github.com/DenverCoder1/readme-typing-svg">
-    <img src="https://readme-typing-svg.demolab.com/?lines=An+AI/ML+engineer+and+full-stack+developer;Who+builds+end-to-end+projects+from+concept+to+deployment.&font=Fira+Code&weight=500&size=20&center=true&vCenter=true&width=650&pause=1000" alt="Typing SVG" />
+  <b>AI Engineering • Agentic Systems • Full-Stack</b><br/>
+  I build end-to-end systems — autonomous agents, RAG pipelines, and real-world automation tools.
+</p>
+
+<p align="center">
+  <a href="mailto:Karunya.muddana@outlook.com"><img src="https://img.shields.io/badge/Email-Karunya.muddana%40outlook.com-informational?style=for-the-badge&logo=microsoft-outlook&logoColor=white" /></a>
+  <a href="https://github.com/Karunya-Muddana"><img src="https://img.shields.io/badge/GitHub-Karunya--Muddana-black?style=for-the-badge&logo=github&logoColor=white" /></a>
+  <a href="https://www.linkedin.com"><img src="https://img.shields.io/badge/LinkedIn-Karunya%20Muddana-blue?style=for-the-badge&logo=linkedin&logoColor=white" /></a>
+</p>
+
+---
+
+<h2 align="center">⚡ Featured Projects</h2>
+
+<p align="center">
+  <a href="https://github.com/Karunya-Muddana/project-smith">
+    <img src="https://github-readme-stats.vercel.app/api/pin/?username=Karunya-Muddana&repo=project-smith&hide_border=true" />
+  </a>
+  <a href="https://github.com/Karunya-Muddana/embedding-powered-qa">
+    <img src="https://github-readme-stats.vercel.app/api/pin/?username=Karunya-Muddana&repo=embedding-powered-qa&hide_border=true" />
   </a>
 </p>
 
-- 🔭 I’m currently working on **autonomous AI agents and end-to-end MLOps pipelines.**
-
-- 💬 Ask me about **Generative AI (RAG, Fine-Tuning), Autonomous Agents (ReAct), MLOps (Ollama, Docker), and Full-Stack Development (React, Firebase).**
-
-- 📫 How to reach me **Karunya.muddana@outlook.com**
-
-- ⚡ Fun fact **My first real-world project automated data entry for my mom, saving her hours of work every week!**
-
-<h3 align="center">Connect with me:</h3>
 <p align="center">
-  </p>
+  <a href="https://github.com/Karunya-Muddana/CBSE-Result-Analyzer-with-Excel-Reports-Python-Pandas-">
+    <img src="https://github-readme-stats.vercel.app/api/pin/?username=Karunya-Muddana&repo=CBSE-Result-Analyzer-with-Excel-Reports-Python-Pandas-&hide_border=true" />
+  </a>
+  <a href="https://github.com/Karunya-Muddana/Lisence-Plate-Detector">
+    <img src="https://github-readme-stats.vercel.app/api/pin/?username=Karunya-Muddana&repo=Lisence-Plate-Detector&hide_border=true" />
+  </a>
+</p>
 
-<h3 align="center">Languages and Tools:</h3>
-<p align="center"> 
-  <a href="https://aws.amazon.com" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" alt="aws" width="40" height="40"/> </a> 
-  <a href="https://www.blender.org/" target="_blank" rel="noreferrer"> <img src="https://download.blender.org/branding/community/blender_community_badge_white.svg" alt="blender" width="40" height="40"/> </a> 
-  <a href="https://www.cprogramming.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/c/c-original.svg" alt="c" width="40" height="40"/> </a> 
-  <a href="https://www.w3schools.com/cpp/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/cplusplus/cplusplus-original.svg" alt="cplusplus" width="40" height="40"/> </a> 
-  <a href="https://www.docker.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/docker/docker-original-wordmark.svg" alt="docker" width="40" height="40"/> </a> 
-  <a href="https://www.figma.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/figma/figma-icon.svg" alt="figma" width="40" height="40"/> </a> 
-  <a href="https://cloud.google.com" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/google_cloud/google_cloud-icon.svg" alt="gcp" width="40" height="40"/> </a> 
-  <a href="https://nodejs.org" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" alt="nodejs" width="40" height="40"/> </a> 
-  <a href="https://opencv.org/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/opencv/opencv-icon.svg" alt="opencv" width="40" height="40"/> </a> 
-  <a href="https://pandas.pydata.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/2ae2a900d2f041da66e950e4d48052658d850630/icons/pandas/pandas-original.svg" alt="pandas" width="40" height="40"/> </a> 
-  <a href="https://www.python.org" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" alt="python" width="40" height="40"/> </a> 
-  <a href="https://pytorch.org/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/pytorch/pytorch-icon.svg" alt="pytorch" width="40" height="40"/> </a> 
-  <a href="https://scikit-learn.org/" target="_blank" rel="noreferrer"> <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Scikit_learn_logo_small.svg" alt="scikit_learn" width="40" height="40"/> </a> 
-  <a href="https://seaborn.pydata.org/" target="_blank" rel="noreferrer"> <img src="https://seaborn.pydata.org/_images/logo-mark-lightbg.svg" alt="seaborn" width="40" height="40"/> </a> 
-  <a href="https://www.tensorflow.org" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/tensorflow/tensorflow-icon.svg" alt="tensorflow" width="40" height="40"/> </a> 
+---
+
+<h2 align="center">🧰 Tech Stack</h2>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-111?style=for-the-badge&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/PyTorch-111?style=for-the-badge&logo=pytorch&logoColor=white"/>
+  <img src="https://img.shields.io/badge/TensorFlow-111?style=for-the-badge&logo=tensorflow&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Flask-111?style=for-the-badge&logo=flask&logoColor=white"/>
+  <img src="https://img.shields.io/badge/React-111?style=for-the-badge&logo=react&logoColor=white"/>
+  <img src="https://img.shields.io/badge/TypeScript-111?style=for-the-badge&logo=typescript&logoColor=white"/>
+  <img src="https://img.shields.io/badge/MongoDB-111?style=for-the-badge&logo=mongodb&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Docker-111?style=for-the-badge&logo=docker&logoColor=white"/>
+</p>
+
+---
+
+<h2 align="center">🧠 What I'm Building</h2>
+
+<p align="center">
+  <b>Project Smith</b> — a tool-based agent runtime with DAG planning, safe execution, retries, and trace logs.<br/>
+  I love building systems that are <b>useful</b>, <b>reliable</b>, and <b>shippable</b>.
 </p>
