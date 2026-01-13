@@ -1,92 +1,118 @@
+<!-- ======= BANNER ======= -->
 <p align="center">
-  <img src="Karunya%20Muddana%20(2).png" width="100%" alt="banner" />
+  <img src="Karunya%20Muddana%20(2).png" width="100%" alt="banner"/>
 </p>
 
 <h1 align="center">Karunya Muddana</h1>
 
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com/?lines=AI%20Engineering%20%7C%20Agentic%20Systems%20%7C%20Full-Stack;Building%20autonomous%20agents%20%26%20end-to-end%20AI%20systems;DAG%20planners%20%7C%20RAG%20pipelines%20%7C%20MLOps&font=Fira+Code&center=true&vCenter=true&width=850&pause=900&size=20" />
+  <b>DAG planners</b> • <b>RAG pipelines</b> • <b>MLOps</b>
 </p>
 
 <p align="center">
-  <a href="mailto:Karunya.muddana@outlook.com"><img src="https://img.shields.io/badge/Email-0A66C2?style=for-the-badge&logo=microsoftoutlook&logoColor=white" /></a>
+  <a href="mailto:Karunya.muddana@outlook.com"><img src="https://img.shields.io/badge/Email-111?style=for-the-badge&logo=microsoft-outlook&logoColor=white" /></a>
   <a href="https://github.com/Karunya-Muddana"><img src="https://img.shields.io/badge/GitHub-111?style=for-the-badge&logo=github&logoColor=white" /></a>
   <a href="https://www.linkedin.com/in/"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" /></a>
 </p>
 
+<br/>
+
 ---
 
-<h2 align="center">⚡ Featured Bento</h2>
+## ⚡ Featured Bento
 
-<table align="center">
+> Clean, production-style systems — from planning to execution to deployment.
+
+<table>
 <tr>
-<td width="50%">
-  <h3>🧠 Project Smith</h3>
-  <p>Zero-trust autonomous agent runtime — drop in tools, planner builds the DAG.</p>
-  <a href="https://github.com/Karunya-Muddana/project-smith">
-    <img src="https://github-readme-stats.vercel.app/api/pin/?username=Karunya-Muddana&repo=project-smith&hide_border=true" />
-  </a>
+<td width="50%" valign="top">
+
+### 🧠 Project Smith  
+**Zero-trust autonomous agent runtime** — drop in tools, planner builds the DAG.  
+✅ Tool registry • ✅ retries • ✅ tracing • ✅ Mongo persistence
+
+<a href="https://github.com/Karunya-Muddana/project-smith">
+  <img src="https://raw.githubusercontent.com/Karunya-Muddana/project-smith/main/assets/cover.png" width="100%" />
+</a>
+
 </td>
-<td width="50%">
-  <h3>🔎 Embedding QA</h3>
-  <p>Retrieval-powered QA system using embeddings + search pipeline.</p>
-  <a href="https://github.com/Karunya-Muddana/embedding-powered-qa">
-    <img src="https://github-readme-stats.vercel.app/api/pin/?username=Karunya-Muddana&repo=embedding-powered-qa&hide_border=true" />
-  </a>
+<td width="50%" valign="top">
+
+### 🔎 Embedding QA  
+Retrieval-powered QA system using embeddings + search pipeline.  
+✅ Vector retrieval • ✅ query pipeline • ✅ fast responses
+
+<a href="https://github.com/Karunya-Muddana/embedding-powered-qa">
+  <img src="https://raw.githubusercontent.com/Karunya-Muddana/embedding-powered-qa/main/assets/cover.png" width="100%" />
+</a>
+
 </td>
 </tr>
+
 <tr>
-<td width="50%">
-  <h3>📊 CBSE Result Analyzer</h3>
-  <p>Real-world automation: Excel reports + analytics using Pandas.</p>
-  <a href="https://github.com/Karunya-Muddana/CBSE-Result-Analyzer-with-Excel-Reports-Python-Pandas-">
-    <img src="https://github-readme-stats.vercel.app/api/pin/?username=Karunya-Muddana&repo=CBSE-Result-Analyzer-with-Excel-Reports-Python-Pandas-&hide_border=true" />
-  </a>
+<td width="50%" valign="top">
+
+### 📊 CBSE Result Analyzer  
+Automates Excel reports + analytics for real-world school workflows.  
+✅ Pandas analysis • ✅ Excel outputs • ✅ automation
+
+<a href="https://github.com/Karunya-Muddana/CBSE-Result-Analyzer-with-Excel-Reports-Python-Pandas-">
+  <img src="https://raw.githubusercontent.com/Karunya-Muddana/CBSE-Result-Analyzer-with-Excel-Reports-Python-Pandas-/main/assets/cover.png" width="100%" />
+</a>
+
 </td>
-<td width="50%">
-  <h3>🚘 License Plate Detector</h3>
-  <p>OpenCV pipeline for detection + extraction.</p>
-  <a href="https://github.com/Karunya-Muddana/Lisence-Plate-Detector">
-    <img src="https://github-readme-stats.vercel.app/api/pin/?username=Karunya-Muddana&repo=Lisence-Plate-Detector&hide_border=true" />
-  </a>
+<td width="50%" valign="top">
+
+### 🚘 License Plate Detector  
+OpenCV pipeline for detection + extraction.  
+✅ Contours • ✅ OCR-ready output • ✅ preprocessing
+
+<a href="https://github.com/Karunya-Muddana/Lisence-Plate-Detector">
+  <img src="https://raw.githubusercontent.com/Karunya-Muddana/Lisence-Plate-Detector/main/assets/cover.png" width="100%" />
+</a>
+
 </td>
 </tr>
 </table>
 
 ---
 
-<h2 align="center">🧰 Tech Stack</h2>
+## 🧰 Tech Stack
 
 <p align="center">
-  <img src="https://skillicons.dev/icons?i=python,pytorch,tensorflow,flask,react,ts,mongodb,docker,git&perline=9" />
+  <img src="https://skillicons.dev/icons?i=python,pytorch,tensorflow,flask,react,ts,mongodb,docker,git,gcp&perline=10" />
 </p>
 
 ---
 
-<h2 align="center">🪄 Interactive</h2>
+## 🪄 Interactive
 
 <details>
-  <summary><b>📌 What I'm building right now</b></summary>
+  <summary><b>🧠 What I'm building right now</b></summary>
   <br/>
-  <ul>
-    <li><b>Smith Runtime:</b> parallel DAG execution + human-readable trace logs</li>
-    <li><b>RAG:</b> query routing + caching + evals</li>
-    <li><b>MLOps:</b> dockerized pipelines + reproducibility</li>
-  </ul>
+
+  - **Smith Runtime:** parallel DAG execution + human-readable trace logs  
+  - **RAG:** query routing + caching + evals  
+  - **MLOps:** dockerized pipelines + reproducibility
+
 </details>
 
 <details>
-  <summary><b>🧠 Skills snapshot</b></summary>
+  <summary><b>⚙️ Skills snapshot</b></summary>
   <br/>
-  <ul>
-    <li>Agent orchestration: DAG planning, tool routing, retries, tracing</li>
-    <li>Backend: APIs, DB persistence (MongoDB), automation workflows</li>
-    <li>AI: embeddings, RAG, pipelines, evaluation mindset</li>
-  </ul>
+
+  - **Agent orchestration:** DAG planning, tool routing, retries, tracing  
+  - **Backend:** APIs, MongoDB persistence, automation workflows  
+  - **AI:** embeddings, RAG pipelines, evaluation mindset
+
 </details>
 
 ---
 
 <p align="center">
-  <img src="https://github.com/Anmol-Baranwal/Cool-GIFs-For-GitHub/raw/main/Animated%20Cat%20Coding.gif" width="220" />
+  <img src="https://raw.githubusercontent.com/Anmol-Baranwal/Cool-GIFs-For-GitHub/main/assets/animated-divider.gif" width="100%" />
+</p>
+
+<p align="center">
+  <i>“Build systems. Ship fast. Break nothing.”</i>
 </p>
