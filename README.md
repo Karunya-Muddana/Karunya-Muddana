@@ -1,58 +1,92 @@
-<h1 align="center">Hi, I'm Karunya Muddana 👋</h1>
+<p align="center">
+  <img src="Karunya%20Muddana%20(2).png" width="100%" alt="banner" />
+</p>
+
+<h1 align="center">Karunya Muddana</h1>
 
 <p align="center">
-  <b>AI Engineering • Agentic Systems • Full-Stack</b><br/>
-  I build end-to-end systems — autonomous agents, RAG pipelines, and real-world automation tools.
+  <img src="https://readme-typing-svg.demolab.com/?lines=AI%20Engineering%20%7C%20Agentic%20Systems%20%7C%20Full-Stack;Building%20autonomous%20agents%20%26%20end-to-end%20AI%20systems;DAG%20planners%20%7C%20RAG%20pipelines%20%7C%20MLOps&font=Fira+Code&center=true&vCenter=true&width=850&pause=900&size=20" />
 </p>
 
 <p align="center">
-  <a href="mailto:Karunya.muddana@outlook.com"><img src="https://img.shields.io/badge/Email-Karunya.muddana%40outlook.com-informational?style=for-the-badge&logo=microsoft-outlook&logoColor=white" /></a>
-  <a href="https://github.com/Karunya-Muddana"><img src="https://img.shields.io/badge/GitHub-Karunya--Muddana-black?style=for-the-badge&logo=github&logoColor=white" /></a>
-  <a href="https://www.linkedin.com"><img src="https://img.shields.io/badge/LinkedIn-Karunya%20Muddana-blue?style=for-the-badge&logo=linkedin&logoColor=white" /></a>
+  <a href="mailto:Karunya.muddana@outlook.com"><img src="https://img.shields.io/badge/Email-0A66C2?style=for-the-badge&logo=microsoftoutlook&logoColor=white" /></a>
+  <a href="https://github.com/Karunya-Muddana"><img src="https://img.shields.io/badge/GitHub-111?style=for-the-badge&logo=github&logoColor=white" /></a>
+  <a href="https://www.linkedin.com/in/"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" /></a>
 </p>
 
 ---
 
-<h2 align="center">⚡ Featured Projects</h2>
+<h2 align="center">⚡ Featured Bento</h2>
 
-<p align="center">
+<table align="center">
+<tr>
+<td width="50%">
+  <h3>🧠 Project Smith</h3>
+  <p>Zero-trust autonomous agent runtime — drop in tools, planner builds the DAG.</p>
   <a href="https://github.com/Karunya-Muddana/project-smith">
     <img src="https://github-readme-stats.vercel.app/api/pin/?username=Karunya-Muddana&repo=project-smith&hide_border=true" />
   </a>
+</td>
+<td width="50%">
+  <h3>🔎 Embedding QA</h3>
+  <p>Retrieval-powered QA system using embeddings + search pipeline.</p>
   <a href="https://github.com/Karunya-Muddana/embedding-powered-qa">
     <img src="https://github-readme-stats.vercel.app/api/pin/?username=Karunya-Muddana&repo=embedding-powered-qa&hide_border=true" />
   </a>
-</p>
-
-<p align="center">
+</td>
+</tr>
+<tr>
+<td width="50%">
+  <h3>📊 CBSE Result Analyzer</h3>
+  <p>Real-world automation: Excel reports + analytics using Pandas.</p>
   <a href="https://github.com/Karunya-Muddana/CBSE-Result-Analyzer-with-Excel-Reports-Python-Pandas-">
     <img src="https://github-readme-stats.vercel.app/api/pin/?username=Karunya-Muddana&repo=CBSE-Result-Analyzer-with-Excel-Reports-Python-Pandas-&hide_border=true" />
   </a>
+</td>
+<td width="50%">
+  <h3>🚘 License Plate Detector</h3>
+  <p>OpenCV pipeline for detection + extraction.</p>
   <a href="https://github.com/Karunya-Muddana/Lisence-Plate-Detector">
     <img src="https://github-readme-stats.vercel.app/api/pin/?username=Karunya-Muddana&repo=Lisence-Plate-Detector&hide_border=true" />
   </a>
-</p>
+</td>
+</tr>
+</table>
 
 ---
 
 <h2 align="center">🧰 Tech Stack</h2>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-111?style=for-the-badge&logo=python&logoColor=white"/>
-  <img src="https://img.shields.io/badge/PyTorch-111?style=for-the-badge&logo=pytorch&logoColor=white"/>
-  <img src="https://img.shields.io/badge/TensorFlow-111?style=for-the-badge&logo=tensorflow&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Flask-111?style=for-the-badge&logo=flask&logoColor=white"/>
-  <img src="https://img.shields.io/badge/React-111?style=for-the-badge&logo=react&logoColor=white"/>
-  <img src="https://img.shields.io/badge/TypeScript-111?style=for-the-badge&logo=typescript&logoColor=white"/>
-  <img src="https://img.shields.io/badge/MongoDB-111?style=for-the-badge&logo=mongodb&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Docker-111?style=for-the-badge&logo=docker&logoColor=white"/>
+  <img src="https://skillicons.dev/icons?i=python,pytorch,tensorflow,flask,react,ts,mongodb,docker,git&perline=9" />
 </p>
 
 ---
 
-<h2 align="center">🧠 What I'm Building</h2>
+<h2 align="center">🪄 Interactive</h2>
+
+<details>
+  <summary><b>📌 What I'm building right now</b></summary>
+  <br/>
+  <ul>
+    <li><b>Smith Runtime:</b> parallel DAG execution + human-readable trace logs</li>
+    <li><b>RAG:</b> query routing + caching + evals</li>
+    <li><b>MLOps:</b> dockerized pipelines + reproducibility</li>
+  </ul>
+</details>
+
+<details>
+  <summary><b>🧠 Skills snapshot</b></summary>
+  <br/>
+  <ul>
+    <li>Agent orchestration: DAG planning, tool routing, retries, tracing</li>
+    <li>Backend: APIs, DB persistence (MongoDB), automation workflows</li>
+    <li>AI: embeddings, RAG, pipelines, evaluation mindset</li>
+  </ul>
+</details>
+
+---
 
 <p align="center">
-  <b>Project Smith</b> — a tool-based agent runtime with DAG planning, safe execution, retries, and trace logs.<br/>
-  I love building systems that are <b>useful</b>, <b>reliable</b>, and <b>shippable</b>.
+  <img src="https://github.com/Anmol-Baranwal/Cool-GIFs-For-GitHub/raw/main/Animated%20Cat%20Coding.gif" width="220" />
 </p>
