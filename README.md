@@ -1,113 +1,49 @@
-<p align="center">
-  <img src="Karunya%20Muddana%20(2).png" width="100%" alt="banner"/>
-</p>
+<h1 align="center">Hi, I'm Karunya</h1>
 
-<h1 align="center">Karunya Muddana</h1>
+<p align="center"><samp>Agents. Retrieval. Receipts.</samp></p>
 
 <p align="center">
-  <b>Agentic AI • RAG • Systems Engineering</b><br/>
-  Building autonomous runtimes, retrieval pipelines, and production-style tooling.
-</p>
-
-<p align="center">
-  <a href="mailto:Karunya.muddana@outlook.com"><img src="https://img.shields.io/badge/Email-111?style=for-the-badge&logo=microsoft-outlook&logoColor=white" /></a>
-  <a href="https://github.com/Karunya-Muddana"><img src="https://img.shields.io/badge/GitHub-111?style=for-the-badge&logo=github&logoColor=white" /></a>
-  <a href="https://www.linkedin.com/in/"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" /></a>
-</p>
-
-<br/>
-
----
-
-## ⚡ Featured Bento
-
-<table>
-<tr>
-<td width="50%" valign="top">
-
-### 🧠 Project Smith
-**Zero-trust autonomous agent runtime**  
-DAG planning • tool execution • retries • Mongo tracing  
-🔗 Repo → https://github.com/Karunya-Muddana/project-smith
-
-</td>
-<td width="50%" valign="top">
-
-### 🔎 Embedding Powered QA
-Retrieval-based QA using embeddings + search  
-Fast pipeline • clean architecture  
-🔗 Repo → https://github.com/Karunya-Muddana/embedding-powered-qa
-
-</td>
-</tr>
-
-<tr>
-<td width="50%" valign="top">
-
-### 📊 CBSE Result Analyzer
-Automated Excel report generation + analytics  
-Real-world automation pipeline  
-🔗 Repo → https://github.com/Karunya-Muddana/CBSE-Result-Analyzer-with-Excel-Reports-Python-Pandas-
-
-</td>
-<td width="50%" valign="top">
-
-### 🚘 License Plate Detector
-OpenCV pipeline for detection + extraction  
-Preprocessing • contours • OCR-ready output  
-🔗 Repo → https://github.com/Karunya-Muddana/Lisence-Plate-Detector
-
-</td>
-</tr>
-</table>
-
----
-
-## 🧰 Tech Stack
-<p align="center">
-  <img src="https://skillicons.dev/icons?i=python,pytorch,tensorflow,flask,react,ts,mongodb,docker,git,gcp&perline=10" />
+  <a href="https://karunya-muddana.github.io"><img src="assets/badges/portfolio.svg" alt="Portfolio" height="28"></a>
+  <a href="https://www.linkedin.com/in/karunya-muddana"><img src="assets/badges/linkedin.svg" alt="LinkedIn" height="28"></a>
+  <a href="mailto:karunya.muddana@outlook.com"><img src="assets/badges/email.svg" alt="Email" height="28"></a>
 </p>
 
 ---
 
-## 📈 Metrics
+I'm a second-year Computer Science (AI/ML) student at GITAM in Hyderabad. I build LLM agents that call tools and read real data, and I hold them to one rule: **every answer points back to where it came from**.
 
-<table align="center">
-  <tr>
-    <td align="center" width="50%">
-      <img src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=Karunya-Muddana&theme=github_dark" />
-    </td>
-    <td align="center" width="50%">
-      <img src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=Karunya-Muddana&theme=github_dark" />
-    </td>
-  </tr>
-</table>
+The first one I shipped was for a company. Staff asked plain-English questions of their Excel workbooks and got answers traced to the file, sheet and cell. They used it every day, until the company moved to a commercial ERP.
 
----
+Right now I'm looking for an **AI/ML engineering internship**.
 
-## 🪄 What I’m Building
-- **Smith Runtime:** parallel DAG execution + human-readable trace logs  
-- **RAG:** query routing + caching + evals  
-- **MLOps:** dockerized pipelines + reproducibility  
+## What I've Built
 
----
+- `2026-09` [**Tareekh**](https://github.com/Karunya-Muddana/tareekh): practice memory for Indian litigators. Turns diary photos, notes and court order sheets into one memory per hearing, with every sentence cited. Led the team at Hack with Hyderabad 3.0.
+- `2026-09` [**Native**](https://github.com/Karunya-Muddana/Native): an agent runtime that reads documents, runs Python in a network-disabled container, and falls back to another model provider when one is rate-limited.
+- `2026-08` [**ExcelMCP**](https://github.com/Karunya-Muddana/ExcelMCP): an MCP server for live Excel data. Values are always fetched live; only sheet structure is cached. Tested against 21 workbooks with known answers.
+- `2025-11` [**project-smith**](https://github.com/Karunya-Muddana/project-smith): a zero-trust agent runtime. You drop in tools and the planner builds the DAG.
 
-<details>
-  <summary><b>⚙️ Skill Snapshot</b></summary>
-  <br/>
+## Tech I Use
 
-  - Agent orchestration: DAG planning, tool routing, retries, traceability  
-  - Backend: APIs, MongoDB persistence, automation workflows  
-  - AI: embeddings, RAG pipelines, evaluation mindset  
-
-</details>
-
-<br/>
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Anmol-Baranwal/Cool-GIFs-For-GitHub/main/assets/animated-divider.gif" width="100%" />
+<p>
+  <img src="assets/badges/python.svg" alt="Python" height="28">
+  <img src="assets/badges/fastapi.svg" alt="FastAPI" height="28">
+  <img src="assets/badges/langgraph.svg" alt="LangGraph" height="28">
+  <img src="assets/badges/mcp.svg" alt="MCP" height="28">
+  <img src="assets/badges/scikit-learn.svg" alt="scikit-learn" height="28">
+  <img src="assets/badges/pandas.svg" alt="Pandas" height="28">
+  <img src="assets/badges/postgresql.svg" alt="PostgreSQL" height="28">
+  <img src="assets/badges/sqlite.svg" alt="SQLite" height="28">
+  <img src="assets/badges/docker.svg" alt="Docker" height="28">
+  <img src="assets/badges/pytest.svg" alt="pytest" height="28">
+  <img src="assets/badges/google-cloud.svg" alt="Google Cloud" height="28">
+  <img src="assets/badges/nextjs.svg" alt="Next.js" height="28">
 </p>
 
+## Activity
+
 <p align="center">
-  <i>Ship systems. Make them reliable. Repeat.</i>
+  <img src="metrics.svg" alt="Contribution calendar, commit habits and languages">
 </p>
+
+<p align="right"><sub>Redrawn every morning by <a href=".github/workflows/metrics.yml">a GitHub Action</a>.</sub></p>
