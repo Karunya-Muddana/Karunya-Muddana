@@ -10,6 +10,15 @@
 
 The first agent I shipped was for a company: staff asked plain-English questions of their Excel workbooks and every answer came back traced to the file, sheet and cell. They used it daily until the company moved to a commercial ERP. Everything I've built since follows the same rule: **if an agent says it, it should be able to show where it came from.**
 
+### By the numbers
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/graph-growth-dark.svg"><img src="assets/graph-growth-light.svg" alt="Lines of code written over time across project-smith, ExcelMCP, Native and Tareekh" width="100%"></picture>
+
+<p>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="assets/graph-code-dark.svg"><img src="assets/graph-code-light.svg" alt="Lines of code by project, and languages" width="49%"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="assets/graph-tests-dark.svg"><img src="assets/graph-tests-light.svg" alt="Automated tests by project" width="49%"></picture>
+</p>
+
 ### Selected work
 
 <p>
@@ -24,3 +33,5 @@ The first agent I shipped was for a company: staff asked plain-English questions
 ### Stack
 
 <picture><source media="(prefers-color-scheme: dark)" srcset="assets/stack-dark.svg"><img src="assets/stack-light.svg" alt="Python, SQL, TypeScript, C++. MCP, LangGraph, RAG, scikit-learn, XGBoost, Pandas. FastAPI, PostgreSQL, SQLite, Microsoft Graph, pytest. Google Cloud, Vertex AI, Docker, Git, Next.js." width="100%"></picture>
+
+<p align="right"><sub>Numbers are counted from the public repos and refreshed weekly by <a href=".github/workflows/refresh.yml">a GitHub Action</a>.</sub></p>

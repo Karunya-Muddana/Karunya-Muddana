@@ -7,10 +7,13 @@ Fonts (Mona Sans, Monaspace Neon; SIL OFL) are subset and embedded in each SVG, 
 images look the same everywhere and load nothing at render time. Icons come from GitHub
 Octicons (MIT) and Simple Icons (CC0). Sources are downloaded once into .cache/.
 """
+import ast
 import base64
+import datetime as dt
 import io
 import os
 import re
+import subprocess
 import urllib.request
 from xml.sax.saxutils import escape
 
@@ -105,7 +108,7 @@ class Svg:
             fam, wt = font.split("-")
             opts = subset.Options()
             opts.flavor, opts.layout_features, opts.name_IDs = "woff2", ["kern", "liga", "calt"], []
-            f = TTFont(cached(FONT_SRC[font]))
+            f = TTFont(cached(FONT_SRC[font]), recalcTimestamp=False)
             sub = subset.Subsetter(opts)
             sub.populate(text="".join(sorted(chars)) + " ")
             sub.subset(f)
@@ -363,6 +366,203 @@ def stack(theme):
     return s
 
 
+# ─────────────────────────────── repo stats (graphs) ───────────────────────────────
+# Oldest first; this is also the stacking order of the growth chart.
+REPOS = [("project-smith", "project-smith", "purple"), ("ExcelMCP", "ExcelMCP", "green"),
+         ("Native", "Native", "orange"), ("tareekh", "Tareekh", "blue")]
+SERIES = {"dark": dict(purple="#ab7df8", green="#3fb950", orange="#db6d28", blue="#4493f8"),
+          "light": dict(purple="#8250df", green="#1a7f37", orange="#bc4c00", blue="#0969da")}
+CODE_EXT = {".py": "Python", ".ts": "TypeScript", ".tsx": "TypeScript", ".js": "JavaScript", ".jsx": "JavaScript",
+            ".html": "HTML", ".css": "CSS", ".sql": "SQL", ".sh": "Shell"}
+LANG.update({"HTML": "#e34c26", "CSS": "#663399", "JavaScript": "#f1e05a", "Other": "#8b949e"})
+
+
+def git(repo, *args):
+    return subprocess.run(["git", "-C", repo, *args], capture_output=True, text=True, check=True).stdout
+
+
+def checkout(name):
+    path = os.path.join(CACHE, "repos", name)
+    if os.path.isdir(os.path.join(path, ".git")):
+        git(path, "pull", "-q", "--ff-only")
+    else:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        subprocess.run(["git", "clone", "-q", f"https://github.com/Karunya-Muddana/{name}", path], check=True)
+    return path
+
+
+def count_tests(path):
+    """Tests as pytest collects them: test functions and Test* methods, times literal parametrize cases."""
+    def cases(fn):
+        k = 1
+        for d in fn.decorator_list:
+            if (isinstance(d, ast.Call) and getattr(d.func, "attr", "") == "parametrize" and len(d.args) >= 2
+                    and isinstance(d.args[1], (ast.List, ast.Tuple))):
+                k *= len(d.args[1].elts)
+        return k
+    tree, n = ast.parse(open(path, encoding="utf-8").read()), 0
+    for node in tree.body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith("test"):
+            n += cases(node)
+        elif isinstance(node, ast.ClassDef) and node.name.startswith("Test"):
+            n += sum(cases(m) for m in node.body
+                     if isinstance(m, (ast.FunctionDef, ast.AsyncFunctionDef)) and m.name.startswith("test"))
+    return n
+
+
+def collect():
+    stats = {}
+    for name, label, _ in REPOS:
+        path = checkout(name)
+        # net lines of code over time, from every commit's numstat (lockfiles excluded)
+        growth, day, net = [], None, 0
+        for line in git(path, "log", "--reverse", "--numstat", "--format=@%ad", "--date=short").splitlines():
+            if line.startswith("@"):
+                if day:
+                    growth.append((day, net))
+                day = line[1:]
+            elif line.strip():
+                a, d, f = line.split("\t", 2)
+                f = f.split(" => ")[-1].rstrip("}")
+                if a != "-" and "lock" not in f.lower() and os.path.splitext(f)[1].lower() in CODE_EXT:
+                    net += int(a) - int(d)
+        growth.append((day, net))
+        langs, tests = {}, 0
+        for f in git(path, "ls-files").split():
+            lang = CODE_EXT.get(os.path.splitext(f)[1].lower())
+            if lang and "lock" not in f.lower():
+                with open(os.path.join(path, f), encoding="utf-8", errors="ignore") as fh:
+                    langs[lang] = langs.get(lang, 0) + sum(1 for l in fh if l.strip())
+            if f.endswith(".py") and "tests/" in f and os.path.basename(f).startswith("test_"):
+                tests += count_tests(os.path.join(path, f))
+        stats[label] = dict(growth=growth, lines=net, langs=langs, tests=tests)
+    return stats
+
+
+def k(n):
+    return f"{n / 1000:.1f}k" if n >= 1000 else str(n)
+
+
+def growth_chart(stats):
+    def build(theme):
+        s = Svg(840, 300, theme)
+        t, col = s.t, SERIES[theme]
+        s.rect(.5, .5, 839, 299, rx=12, fill="panel", stroke="border")
+        total = sum(v["lines"] for v in stats.values())
+        s.text(24, 38, "Code written", "sans-600", 16, "fg")
+        start = min(dt.date.fromisoformat(v["growth"][0][0]) for v in stats.values()).replace(day=1)
+        end = dt.date.today()
+        s.text(24, 58, f"Lines of code across {len(stats)} public projects, {start:%b %Y} – {end:%b %Y}", "sans-400", 12.5, "muted")
+        s.text(816, 42, k(total), "sans-700", 28, "fg", anchor="end", spacing=-.5)
+        s.text(816, 60, "lines of code", "sans-400", 12, "muted", anchor="end")
+        x0, x1, y0, y1 = 64, 816, 92, 236
+        top = max(20000, -(-total // 20000) * 20000)
+        days = (end - start).days
+        X = lambda d: x0 + (x1 - x0) * (d - start).days / days
+        Y = lambda v: y1 - (y1 - y0) * v / top
+        for v in range(0, top + 1, 20000 if top > 40000 else 10000):
+            s.add(f'<path d="M{x0} {Y(v):.1f}H{x1}" stroke="{t["border"]}" stroke-dasharray="{"0" if v == 0 else "2 4"}"/>')
+            s.text(x0 - 8, Y(v) + 3.5, f"{v // 1000}k" if v else "0", "mono-400", 10.5, "subtle", anchor="end")
+        m = start
+        while m <= end:
+            if X(m) < x1 - 20:
+                s.text(X(m), y1 + 18, m.strftime("%b") if m.month != 1 else m.strftime("%b %y"), "mono-400", 10.5, "subtle", anchor="middle")
+            m = (m.replace(day=28) + dt.timedelta(days=4)).replace(day=1)
+
+        def value(series, day):
+            v = 0
+            for d, n in series:
+                if dt.date.fromisoformat(d) <= day:
+                    v = n
+            return max(v, 0)
+        steps = [start + dt.timedelta(days=i) for i in range(0, days + 1, 2)] + [end]
+        base = [0] * len(steps)
+        paths = []
+        for label, (_, _, c) in zip(stats, REPOS):
+            vals = [b + value(stats[label]["growth"], d) for b, d in zip(base, steps)]
+            first = dt.date.fromisoformat(stats[label]["growth"][0][0])
+            own = [(d, v) for d, v in zip(steps, vals) if d >= first]
+            up = " ".join(f"{X(d):.1f},{Y(v):.1f}" for d, v in zip(steps, vals))
+            down = " ".join(f"{X(d):.1f},{Y(v):.1f}" for d, v in reversed(list(zip(steps, base))))
+            edge = " ".join(f"{X(d):.1f},{Y(v):.1f}" for d, v in own)
+            paths.append(f'<polygon points="{up} {down}" fill="{col[c]}" fill-opacity=".8"/>'
+                         f'<polyline points="{edge}" fill="none" stroke="{col[c]}" stroke-width="1.6" stroke-linejoin="round"/>')
+            base = vals
+        s.add(f'<clipPath id="reveal"><rect x="{x0}" y="{y0 - 10}" width="{x1 - x0}" height="{y1 - y0 + 12}" class="rv"/></clipPath>'
+              f'<g clip-path="url(#reveal)">{"".join(paths)}</g>')
+        s.css.append(f".rv{{animation:rv 1.6s cubic-bezier(.3,.7,.2,1)}}@keyframes rv{{from{{width:0}}to{{width:{x1 - x0}px}}}}")
+        lx = 24
+        for label, (_, _, c) in zip(stats, REPOS):
+            s.add(f'<circle cx="{lx + 5}" cy="274" r="5" fill="{col[c]}"/>')
+            w = s.text(lx + 16, 278.5, label, "sans-500", 12.5, "fg")
+            w += s.text(lx + 22 + w, 278.5, k(stats[label]["lines"]), "mono-400", 11.5, "muted")
+            lx += w + 44
+        return s
+    return build
+
+
+def bars_card(stats, title, key, note, fmt=k):
+    rows = sorted(((lab, stats[lab][key], c) for lab, (_, _, c) in zip(stats, REPOS) if stats[lab][key]),
+                  key=lambda r: -r[1])
+
+    def build(theme):
+        s = Svg(412, 252, theme)
+        col = SERIES[theme]
+        s.rect(.5, .5, 411, 251, rx=12, fill="panel", stroke="border")
+        s.text(20, 36, title, "sans-600", 16, "fg")
+        total = sum(r[1] for r in rows)
+        s.text(392, 38, fmt(total), "sans-700", 24, "fg", anchor="end", spacing=-.5)
+        mx = max(r[1] for r in rows)
+        for i, (lab, v, c) in enumerate(rows):
+            y = 68 + i * 30
+            s.text(20, y + 12, lab, "sans-400", 13, "fg")
+            w = max(4, 196 * v / mx)
+            s.rect(124, y + 2, 196, 12, rx=6, fill="canvas")
+            s.rect(124, y + 2, w, 12, rx=6, fill=col[c], cls="bar", extra=f' style="animation-delay:{i * .12:.2f}s"')
+            s.text(392, y + 12.5, fmt(v), "mono-400", 11.5, "muted", anchor="end")
+        s.css.append(".bar{transform-box:fill-box;transform-origin:left;animation:bar 1s cubic-bezier(.3,.7,.2,1) backwards}"
+                     "@keyframes bar{from{transform:scaleX(0)}}")
+        note(s, theme)
+        return s
+    return build
+
+
+def languages_note(stats):
+    langs = {}
+    for v in stats.values():
+        for lang, n in v["langs"].items():
+            langs[lang] = langs.get(lang, 0) + n
+    total = sum(langs.values())
+    top = sorted(langs.items(), key=lambda kv: -kv[1])
+    shown = [(l, n) for l, n in top if n / total >= .02][:3]
+    rest = total - sum(n for _, n in shown)
+    bar = shown + ([("Other", rest)] if rest else [])
+
+    def note(s, theme):
+        s.text(20, 196, "Languages", "sans-600", 13, "fg")
+        x = 20
+        s.add('<clipPath id="lb"><rect x="20" y="204" width="372" height="8" rx="4"/></clipPath><g clip-path="url(#lb)">')
+        for lang, n in bar:
+            w = 372 * n / total
+            s.rect(x, 204, w + .5, 8, fill=LANG[lang])
+            x += w
+        s.add("</g>")
+        x = 20
+        for lang, n in shown:
+            s.add(f'<circle cx="{x + 4}" cy="230" r="4" fill="{LANG[lang]}"/>')
+            w = s.text(x + 13, 234, lang, "sans-500", 12, "fg")
+            w += s.text(x + 17 + w, 234, f"{100 * n / total:.1f}%", "sans-400", 12, "muted")
+            x += w + 30
+    return note
+
+
+def tests_note(s, theme):
+    s.add(f'<path d="M20 {176.5}H392" stroke="{s.t["border"]}"/>')
+    s.icon("oct", "check", 20, 192, 16, "green")
+    s.text(44, 204.5, "Plus a 21-workbook ground-truth eval for ExcelMCP", "sans-500", 12.5, "fg")
+    s.text(20, 232, "Counted the way pytest collects them, from each tests/ folder", "sans-400", 11.5, "muted")
+
+
 # ─────────────────────────────── contact buttons ───────────────────────────────
 def button(ic, label):
     def build(theme):
@@ -382,6 +582,11 @@ if __name__ == "__main__":
     for name, build in CARDS.items():
         save(name, build, name.replace("card-", ""))
     save("stack", stack, "Tech stack")
+    stats = collect()
+    total, tests = sum(v["lines"] for v in stats.values()), sum(v["tests"] for v in stats.values())
+    save("graph-growth", growth_chart(stats), f"{k(total)} lines of code written across four public projects")
+    save("graph-code", bars_card(stats, "Lines of code", "lines", languages_note(stats)), "Lines of code by project and languages")
+    save("graph-tests", bars_card(stats, "Automated tests", "tests", tests_note, fmt=str), f"{tests} automated tests")
     save("btn-portfolio", button("globe", "Portfolio"), "Portfolio")
     save("btn-linkedin", button("person", "LinkedIn"), "LinkedIn")
     save("btn-email", button("mail", "Email"), "Email")
