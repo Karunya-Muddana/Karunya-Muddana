@@ -6,7 +6,7 @@
   <a href="mailto:karunya.muddana@outlook.com"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/btn-email-dark.svg"><img src="assets/btn-email-light.svg" alt="Email"></picture></a>
 </p>
 
-<picture><source media="(prefers-color-scheme: dark)" srcset="assets/facts-dark.svg"><img src="assets/facts-light.svg" alt="9.15 CGPA at GITAM. An Excel agent used daily by a company's staff. Team lead of Tareekh at Hack with Hyderabad 3.0. 21 workbooks in ExcelMCP's ground-truth eval." width="100%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/facts-dark.svg"><img src="assets/facts-light.svg" alt="9.15 CGPA at GITAM. Freelancing since 2024, building AI agents and websites for companies. Team lead of Tareekh at Hack with Hyderabad 3.0. 21 workbooks in ExcelMCP's ground-truth eval." width="100%"></picture>
 
 The first agent I shipped was for a company: staff asked plain-English questions of their Excel workbooks and every answer came back traced to the file, sheet and cell. They used it daily until the company moved to a commercial ERP. Everything I've built since follows the same rule: **if an agent says it, it should be able to show where it came from.**
 

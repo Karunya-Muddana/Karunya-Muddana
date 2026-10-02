@@ -188,7 +188,7 @@ def header(theme):
 
 # ─────────────────────────────── facts ───────────────────────────────
 FACTS = [("9.15", "CGPA, B.Tech CS (AI/ML)", "at GITAM Hyderabad"),
-         ("Daily", "use of my Excel agent", "by a company's staff"),
+         ("Since 2024", "freelancing: AI agents and", "websites for companies"),
          ("Lead", "of the Tareekh team at", "Hack with Hyderabad 3.0"),
          ("21", "workbooks in ExcelMCP's", "ground-truth eval")]
 
@@ -378,7 +378,7 @@ def button(ic, label):
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     save("header", header, "Karunya Muddana. I build LLM agents that cite their sources.")
-    save("facts", facts, "9.15 CGPA; an Excel agent used daily by a company's staff; Tareekh team lead at Hack with Hyderabad 3.0; 21-workbook eval")
+    save("facts", facts, "9.15 CGPA; freelancing since 2024; Tareekh team lead at Hack with Hyderabad 3.0; 21-workbook eval")
     for name, build in CARDS.items():
         save(name, build, name.replace("card-", ""))
     save("stack", stack, "Tech stack")
