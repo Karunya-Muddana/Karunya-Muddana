@@ -5,7 +5,7 @@
 
 Fonts (Mona Sans, Monaspace Neon; SIL OFL) are subset and embedded in each SVG, so the
 images look the same everywhere and load nothing at render time. Icons come from GitHub
-Octicons (MIT) and Simple Icons (CC0). Sources are downloaded once into .cache/.
+Octicons (MIT). Sources are downloaded once into .cache/.
 """
 import ast
 import base64
@@ -143,227 +143,86 @@ def wrap(text, font, size, width):
     return lines + [cur]
 
 
-# ─────────────────────────────── header ───────────────────────────────
-def header(theme):
-    s = Svg(840, 252, theme)
-    t = s.t
-    # status pill
-    label = "Open to AI/ML internships"
-    pw = measure(label, "sans-500", 13) + 44
-    s.rect(0.5, 8.5, pw, 28, rx=14, fill="panel", stroke="border")
-    s.add(f'<circle cx="18" cy="22.5" r="4" fill="{t["green"]}"/>'
-          f'<circle cx="18" cy="22.5" r="4" fill="none" stroke="{t["green"]}" class="ping"/>')
-    s.css.append(".ping{transform-origin:18px 22.5px;animation:ping 2.4s ease-out infinite}"
-                 "@keyframes ping{0%{transform:scale(1);opacity:.8}80%,100%{transform:scale(2.6);opacity:0}}")
-    s.text(32, 27, label, "sans-500", 13, "fg")
-    s.text(0, 104, "Karunya Muddana", "sans-700", 50, "fg", spacing=-1.2)
-    w = s.text(0, 146, "I build LLM agents that ", "sans-500", 21, "fg")
-    s.text(w, 146, "cite their sources.", "sans-500", 21, "green")
-    s.text(0, 180, "B.Tech CS (AI/ML) at GITAM  ·  Hyderabad, India", "sans-400", 15, "muted")
-    s.text(0, 208, "Python  ·  MCP  ·  LangGraph  ·  FastAPI  ·  Vertex AI", "mono-400", 12.5, "subtle")
-
-    # answer card: each claim lights up together with its source
-    x0, y0, w0, h0 = 486, 6, 352, 240
-    s.rect(x0 + .5, y0 + .5, w0 - 1, h0 - 1, rx=12, fill="panel", stroke="border")
-    s.text(x0 + 18, y0 + 30, "ANSWER", "mono-400", 11, "muted", spacing=1)
-    s.text(x0 + w0 - 18, y0 + 30, "2 claims · 2 cited", "mono-400", 11, "green", anchor="end")
-    s.add(f'<path d="M{x0} {y0 + 44.5}H{x0 + w0}" stroke="{t["border"]}"/>')
-    claims = [("Q3 dispatches rose 12% over Q2.", "dispatch_log.xlsx › Q3 › F18", "table"),
-              ("Next hearing is on 14 March.", "order_sheet.pdf › page 2", "file")]
-    for i, (claim, src, ic) in enumerate(claims, 1):
-        cy = y0 + 52 + (i - 1) * 32
-        s.rect(x0 + 10, cy, w0 - 20, 28, rx=6, fill="hi", cls=f"hl hl{i}", extra=' opacity="0"')
-        tw = s.text(x0 + 18, cy + 19, claim, "sans-400", 15, "fg")
-        s.rect(x0 + 22 + tw, cy + 6, 16, 16, rx=4, fill="blueBg")
-        s.text(x0 + 30 + tw, cy + 18, str(i), "mono-400", 11, "blue", anchor="middle")
-        sy = y0 + 150 + (i - 1) * 46
-        s.text(x0 + 18, y0 + 136, "SOURCES", "mono-400", 11, "muted", spacing=1) if i == 1 else None
-        s.rect(x0 + 10, sy - 4, w0 - 20, 40, rx=8, fill="hi", cls=f"hl hl{i}", extra=' opacity="0"')
-        s.rect(x0 + 18.5, sy + .5, w0 - 37, 31, rx=6, fill="canvas", stroke="border")
-        s.rect(x0 + 28, sy + 8, 16, 16, rx=4, fill="blueBg")
-        s.text(x0 + 36, sy + 20, str(i), "mono-400", 11, "blue", anchor="middle")
-        s.icon("oct", ic, x0 + 54, sy + 8, 16, "muted")
-        s.text(x0 + 78, sy + 20.5, src, "mono-400", 12, "fg")
-    s.css.append(".hl{animation:hl 7s ease-in-out infinite}.hl2{animation-delay:3.5s}"
-                 "@keyframes hl{0%,4%{opacity:0}10%,42%{opacity:1}50%,100%{opacity:0}}")
-    return s
-
-
-# ─────────────────────────────── facts ───────────────────────────────
-FACTS = [("9.15", "CGPA, B.Tech CS (AI/ML)", "at GITAM Hyderabad"),
-         ("Since 2024", "freelancing: AI agents and", "websites for companies"),
-         ("Lead", "of the Tareekh team at", "Hack with Hyderabad 3.0"),
-         ("21", "workbooks in ExcelMCP's", "ground-truth eval")]
-
-
-def facts(theme):
-    s = Svg(840, 112, theme)
-    s.rect(.5, .5, 839, 111, rx=12, fill="panel", stroke="border")
-    cw = 840 / 4
-    for i, (big, l1, l2) in enumerate(FACTS):
-        x = i * cw + 24
-        if i:
-            s.add(f'<path d="M{i * cw:.1f} 20V92" stroke="{s.t["border"]}"/>')
-        s.text(x, 50, big, "sans-700", 30, "fg", spacing=-.5)
-        s.text(x, 74, l1, "sans-400", 13, "muted")
-        s.text(x, 92, l2, "sans-400", 13, "muted")
-    return s
-
-
 # ─────────────────────────────── project cards ───────────────────────────────
-def card(name, pill, desc, lang, proof, draw):
+# Laid out like GitHub's pinned repositories. The drawing on each card uses real
+# content from that repo (tool names, test cases, a saved run), never sample data.
+def card(name, desc, footer, draw):
     def build(theme):
-        s = Svg(412, 252, theme)
-        t = s.t
-        s.rect(.5, .5, 411, 251, rx=12, fill="panel", stroke="border")
+        s = Svg(412, 236, theme)
+        s.rect(.5, .5, 411, 235, rx=8, fill="panel", stroke="border")
         s.icon("oct", "repo", 20, 21, 16, "muted")
-        s.text(44, 34, name, "sans-600", 17, "blue")
-        pw = measure(pill, "sans-500", 11.5) + 20
-        s.rect(392 - pw + .5, 19.5, pw, 22, rx=11, fill="none", stroke="border")
-        s.text(392 - pw / 2, 34.5, pill, "sans-500", 11.5, "muted", anchor="middle")
-        for i, line in enumerate(wrap(desc, "sans-400", 14, 372)[:2]):
-            s.text(20, 64 + i * 20, line, "sans-400", 14, "muted")
-        s.rect(20.5, 100.5, 371, 103, rx=8, fill="canvas", stroke="border")
-        draw(s, t, 20, 100)
-        s.add(f'<circle cx="26" cy="226" r="6" fill="{LANG[lang]}"/>')
-        lw = s.text(38, 230.5, lang, "sans-400", 12.5, "muted")
-        s.icon("oct", "check", 52 + lw, 218, 16, "green")
-        s.text(74 + lw, 230.5, proof, "sans-500", 12.5, "fg")
+        s.text(44, 34, name, "sans-600", 16, "blue")
+        for i, line in enumerate(wrap(desc, "sans-400", 13.5, 372)[:2]):
+            s.text(20, 62 + i * 20, line, "sans-400", 13.5, "muted")
+        draw(s, s.t, 20, 98)
+        s.add(f'<circle cx="26" cy="212" r="6" fill="{LANG["Python"]}"/>')
+        x = 38 + s.text(38, 216.5, "Python", "sans-400", 12.5, "muted") + 18
+        for item in footer:
+            x += s.text(x, 216.5, item, "sans-400", 12.5, "muted") + 18
         return s
     return build
 
 
 def draw_tareekh(s, t, x, y):
-    rows = [("12 JAN", "Adjourned; written reply due", "order p.1", "subtle"),
-            ("03 FEB", "Party A claims a 70% share", "diary p.14", "subtle"),
-            ("14 MAR", "Contradicts their claim in OS 41", "2 sources", "orange")]
-    s.add(f'<path d="M{x + 26} {y + 22}V{y + 82}" stroke="{t["border"]}" stroke-width="2"/>')
-    for i, (d, txt, cite, dot) in enumerate(rows):
-        ry = y + 22 + i * 30
-        s.rect(x + 8, ry - 12, 356, 24, rx=6, fill="hi", cls=f"row r{i}", extra=' opacity="0"')
-        s.add(f'<circle cx="{x + 26}" cy="{ry}" r="4.5" fill="{t[dot]}" stroke="{t["canvas"]}" stroke-width="2"/>')
-        s.text(x + 40, ry + 4, d, "mono-400", 10.5, "muted")
-        s.text(x + 92, ry + 4.5, txt, "sans-400", 12.5, "fg")
-        cw = measure(cite, "mono-400", 10) + 12
-        s.rect(x + 360 - cw, ry - 8, cw, 16, rx=4, fill="blueBg")
-        s.text(x + 360 - cw / 2, ry + 3.5, cite, "mono-400", 10, "blue", anchor="middle")
-    s.css.append(".row{animation:row 6s infinite}.r1{animation-delay:2s}.r2{animation-delay:4s}"
-                 "@keyframes row{0%,2%{opacity:0}8%,30%{opacity:1}36%,100%{opacity:0}}")
+    # straight from tareekh/backend/tests/test_offline.py
+    rows = [('"OS 214/24 - Harinath sought time"', "case C1"),
+            ('"O.S. No. 57 of 2025"', "case C2"),
+            ('"IMG_20260812_171906.jpg"', "hearing 2026-08-12")]
+    for i, (src, out) in enumerate(rows):
+        ry = y + 18 + i * 26
+        w = s.text(x, ry, src, "mono-400", 11.5, "muted")
+        s.text(x + w + 10, ry, "→", "mono-400", 11.5, "subtle")
+        s.text(x + w + 30, ry, out, "mono-400", 11.5, "fg")
 
 
 def draw_excel(s, t, x, y):
-    tabs = ["sales.xlsx", "stock.xlsx", "hr.xlsx"]
-    tx = x + 12
-    for i, tab in enumerate(tabs):
-        w = s.text(tx, y + 18, tab, "mono-400", 10.5, "fg" if i == 1 else "muted")
-        if i == 1:
-            s.rect(tx, y + 23, w, 2, fill="green")
-        tx += w + 14
-    s.text(x + 360, y + 18, "routed by embeddings", "sans-400", 11, "subtle", anchor="end")
-    s.add(f'<path d="M{x} {y + 28.5}H{x + 372}" stroke="{t["border"]}"/>')
-    gx, gy, cw, ch = x + 34, y + 30, 64, 17
-    for c, col in enumerate("ABCDE"):
-        s.text(gx + c * cw + cw / 2, gy + 9, col, "mono-400", 9, "subtle", anchor="middle")
-    vals = [["Item", "Apr", "May", "Jun", "Δ"], ["Resin", "410", "388", "452", "+64"], ["Drums", "96", "104", "99", "−5"]]
-    for r in range(3):
-        ry = gy + 13 + r * ch
-        s.text(x + 18, ry + 12, str(r + 1), "mono-400", 9.5, "subtle", anchor="middle")
-        for c in range(5):
-            s.rect(gx + c * cw + .5, ry + .5, cw, ch, fill="none", stroke="border")
-            s.text(gx + c * cw + 6, ry + 12.5, vals[r][c], "mono-400", 10.5, "muted" if r == 0 else "fg")
-    s.rect(gx + 3 * cw - .5, gy + 13 + ch - .5, cw + 2, ch + 2, rx=2, fill="greenBg", stroke="green", cls="cell")
-    s.css.append(".cell{animation:cell 3s ease-in-out infinite}@keyframes cell{0%,100%{opacity:1}50%{opacity:.35}}")
+    # the 14 @mcp.tool functions in ExcelMCP/main.py
+    tools = ["scan_workspace", "get_workspace_graph", "inspect_file", "sheet_layout", "query", "lookup", "get_cell",
+             "filter_sheet", "fetch_sheet_rows", "fetch_region_rows", "aggregate", "cross_file_aggregate",
+             "join_sheets", "derive"]
+    for i, name in enumerate(tools):
+        col, row = divmod(i, 5)
+        s.text(x + col * 124, y + 14 + row * 18, name, "mono-400", 10, "fg" if col == 0 and row == 0 else "muted")
 
 
 def draw_native(s, t, x, y):
-    def pill(px, py, label, tag, tagc, tagbg, strike=False):
-        w = measure(label, "mono-400", 11) + 20
-        s.rect(px + .5, py + .5, w, 24, rx=12, fill="panel", stroke="border")
-        s.text(px + 10, py + 16.5, label, "mono-400", 11, "subtle" if strike else "fg")
-        if strike:
-            s.add(f'<path d="M{px + 8} {py + 12.5}H{px + w - 8}" stroke="{t["subtle"]}"/>')
-        tw = measure(tag, "mono-400", 10) + 10
-        s.rect(px + w + 6, py + 4, tw, 17, rx=4, fill=tagbg)
-        s.text(px + w + 6 + tw / 2, py + 16, tag, "mono-400", 10, tagc, anchor="middle")
-        return px + w + 6 + tw
-    e1 = pill(x + 14, y + 14, "provider A", "429", "red", "redBg", strike=True)
-    s.add(f'<path d="M{e1 + 10} {y + 26.5}H{e1 + 40}" stroke="{t["muted"]}" stroke-dasharray="3 3" class="flow"/>'
-          f'<path d="M{e1 + 36} {y + 22.5}l4 4-4 4" fill="none" stroke="{t["muted"]}"/>')
-    pill(e1 + 48, y + 14, "provider B", "ok", "green", "greenBg")
-    s.css.append(".flow{animation:flow 1s linear infinite}@keyframes flow{to{stroke-dashoffset:-6}}")
-    bx, by = x + 14, y + 52
-    s.rect(bx + .5, by + .5, 343, 38, rx=8, fill="panel", stroke="border")
-    s.icon("oct", "lock", bx + 12, by + 11, 16, "muted")
-    s.text(bx + 36, by + 23.5, "sandbox", "mono-400", 11, "fg")
-    s.text(bx + 96, by + 23.5, "python  ·  network off  ·  writes .docx", "mono-400", 10.5, "muted")
+    # app/config/providers.py: "Five lanes ... the point of the road is that traffic
+    # keeps moving when a lane closes." Ollama is always last: it works offline.
+    lanes = ["groq", "gemini", "openrouter", "nvidia", "ollama"]
+    lx = x + 92
+    for i, name in enumerate(lanes):
+        ly = y + 10 + i * 17
+        s.text(x, ly + 4, name, "mono-400", 11, "fg" if i == 1 else "muted")
+        dash = ' stroke-dasharray="3 4"' if i == 0 else ""
+        s.add(f'<path d="M{lx} {ly}H{x + 372}" stroke="{t["border"]}" stroke-width="1.5"{dash}/>')
+    s.text(x + 372, y + 6, "rate-limited", "sans-400", 11, "subtle", anchor="end")
+    s.text(x + 372, y + 74, "works offline", "sans-400", 11, "subtle", anchor="end")
+    y0, y1 = y + 10, y + 27
+    s.add(f'<path d="M{lx} {y0}H{lx + 70}C{lx + 100} {y0} {lx + 100} {y1} {lx + 130} {y1}H{x + 280}" '
+          f'fill="none" stroke="{t["green"]}" stroke-width="2"/>'
+          f'<circle cx="{x + 280}" cy="{y1}" r="3.5" fill="{t["green"]}"/>')
 
 
 def draw_smith(s, t, x, y):
-    def node(cx, cy, label, accent=False):
-        w = measure(label, "mono-400", 10.5) + 18
-        s.rect(cx - w / 2 + .5, cy - 11.5, w, 22, rx=6, fill="panel", stroke="green" if accent else "border")
-        s.text(cx, cy + 3.5, label, "mono-400", 10.5, "fg", anchor="middle")
+    # a saved run from the repo: smith_dag_1776680299.json
+    def node(cx, cy, tool, note):
+        w = max(measure(tool, "mono-400", 11), measure(note, "sans-400", 11)) + 20
+        s.rect(cx - w / 2 + .5, cy - 17.5, w, 35, rx=6, fill="canvas", stroke="border")
+        s.text(cx, cy - 2, tool, "mono-400", 11, "fg", anchor="middle")
+        s.text(cx, cy + 12, note, "sans-400", 11, "muted", anchor="middle")
         return w / 2
-    cy = y + 52
-    pts = {"plan": (x + 44, cy), "search": (x + 150, cy - 28), "fetch": (x + 150, cy), "calc": (x + 150, cy + 28),
-           "merge": (x + 254, cy), "trace": (x + 330, cy)}
-    for a, b in [("plan", "search"), ("plan", "fetch"), ("plan", "calc"), ("search", "merge"), ("fetch", "merge"),
-                 ("calc", "merge"), ("merge", "trace")]:
-        (x1, y1), (x2, y2) = pts[a], pts[b]
-        x1 += 26
-        x2 -= 26
+    cy = y + 46
+    a = (x + 56, cy - 22, "google_search", "AMD news")
+    b = (x + 56, cy + 22, "google_search", "Intel news")
+    c = (x + 190, cy, "deep_summarizer", "compare")
+    d = (x + 314, cy, "llm_caller", "report")
+    for (x1, y1, *_), (x2, y2, *_) in [(a, c), (b, c), (c, d)]:
+        x1 += 54
+        x2 -= 60 if x2 == c[0] else 44
         mx = (x1 + x2) / 2
-        s.add(f'<path d="M{x1} {y1}C{mx} {y1} {mx} {y2} {x2} {y2}" fill="none" stroke="{t["border"]}" stroke-width="1.5"/>'
-              f'<path d="M{x1} {y1}C{mx} {y1} {mx} {y2} {x2} {y2}" fill="none" stroke="{t["green"]}" stroke-width="1.5" '
-              f'stroke-dasharray="6 120" class="pulse"/>')
-    for k, (px, py) in pts.items():
-        node(px, py, k + (" ✓" if k == "trace" else ""), accent=k == "trace")
-    s.css.append(".pulse{animation:pulse 2.6s linear infinite}@keyframes pulse{from{stroke-dashoffset:6}to{stroke-dashoffset:-120}}")
-
-
-CARDS = {
-    "card-tareekh": card("tareekh", "Hackathon · team lead",
-                         "Practice memory for Indian litigators. One memory per hearing, every sentence cited.",
-                         "Python", "28 automated tests", draw_tareekh),
-    "card-excelmcp": card("ExcelMCP", "MIT",
-                          "MCP server for live Excel data. Values are fetched live; only sheet structure is cached.",
-                          "Python", "21-workbook ground-truth eval", draw_excel),
-    "card-native": card("Native", "Apache-2.0",
-                        "Agent runtime that runs code in a sealed container and falls back across model providers.",
-                        "Python", "LangGraph · FastAPI · Docker", draw_native),
-    "card-smith": card("project-smith", "Agent runtime",
-                       "Zero-trust agent runtime. Drop in tools; the planner builds and runs the DAG.",
-                       "Python", "parallel DAG · traced runs", draw_smith),
-}
-
-
-# ─────────────────────────────── stack ───────────────────────────────
-STACK = [
-    ("Languages", [("si", "python", "Python"), ("oct", "database", "SQL"), ("si", "typescript", "TypeScript"),
-                   ("si", "cplusplus", "C++")]),
-    ("AI / ML", [("si", "modelcontextprotocol", "MCP"), ("si", "langchain", "LangGraph"), ("oct", "search", "RAG, embeddings"),
-                 ("si", "scikitlearn", "scikit-learn"), ("oct", "git-branch", "XGBoost"), ("si", "pandas", "Pandas, NumPy")]),
-    ("Backend", [("si", "fastapi", "FastAPI"), ("si", "postgresql", "PostgreSQL"), ("si", "sqlite", "SQLite"),
-                 ("oct", "graph", "Microsoft Graph"), ("si", "pytest", "pytest")]),
-    ("Cloud & tools", [("si", "googlecloud", "Google Cloud"), ("oct", "cpu", "Vertex AI"), ("si", "docker", "Docker"),
-                       ("si", "git", "Git"), ("si", "nextdotjs", "Next.js")]),
-]
-
-
-def stack(theme):
-    s = Svg(840, 222, theme)
-    s.rect(.5, .5, 839, 221, rx=12, fill="panel", stroke="border")
-    cw = 840 / 4
-    for i, (head, items) in enumerate(STACK):
-        x = i * cw + 24
-        if i:
-            s.add(f'<path d="M{i * cw:.1f} 20V202" stroke="{s.t["border"]}"/>')
-        s.text(x, 38, head.upper(), "mono-400", 11, "muted", spacing=1)
-        for j, (kind, ic, label) in enumerate(items):
-            iy = 58 + j * 26
-            s.icon(kind, ic, x, iy, 15, "muted")
-            s.text(x + 24, iy + 12, label, "sans-400", 14, "fg")
-    return s
+        s.add(f'<path d="M{x1} {y1}C{mx} {y1} {mx} {y2} {x2} {y2}" fill="none" stroke="{t["muted"]}" stroke-width="1.2"/>')
+    for n in (a, b, c, d):
+        node(*n)
 
 
 # ─────────────────────────────── repo stats (graphs) ───────────────────────────────
@@ -443,18 +302,17 @@ def k(n):
     return f"{n / 1000:.1f}k" if n >= 1000 else str(n)
 
 
+
 def growth_chart(stats):
     def build(theme):
         s = Svg(840, 300, theme)
         t, col = s.t, SERIES[theme]
         s.rect(.5, .5, 839, 299, rx=12, fill="panel", stroke="border")
         total = sum(v["lines"] for v in stats.values())
-        s.text(24, 38, "Code written", "sans-600", 16, "fg")
+        s.text(24, 38, f"{k(total)} lines of code", "sans-600", 16, "fg")
         start = min(dt.date.fromisoformat(v["growth"][0][0]) for v in stats.values()).replace(day=1)
         end = dt.date.today()
-        s.text(24, 58, f"Lines of code across {len(stats)} public projects, {start:%b %Y} – {end:%b %Y}", "sans-400", 12.5, "muted")
-        s.text(816, 42, k(total), "sans-700", 28, "fg", anchor="end", spacing=-.5)
-        s.text(816, 60, "lines of code", "sans-400", 12, "muted", anchor="end")
+        s.text(24, 58, f"Written across {len(stats)} public projects, {start:%B %Y} to {end:%B %Y}", "sans-400", 12.5, "muted")
         x0, x1, y0, y1 = 64, 816, 92, 236
         top = max(20000, -(-total // 20000) * 20000)
         days = (end - start).days
@@ -466,7 +324,7 @@ def growth_chart(stats):
         m = start
         while m <= end:
             if X(m) < x1 - 20:
-                s.text(X(m), y1 + 18, m.strftime("%b") if m.month != 1 else m.strftime("%b %y"), "mono-400", 10.5, "subtle", anchor="middle")
+                s.text(X(m), y1 + 18, m.strftime("%b") if m.month != 1 else m.strftime("%b %Y"), "sans-400", 11, "subtle", anchor="middle")
             m = (m.replace(day=28) + dt.timedelta(days=4)).replace(day=1)
 
         def value(series, day):
@@ -488,108 +346,87 @@ def growth_chart(stats):
             paths.append(f'<polygon points="{up} {down}" fill="{col[c]}" fill-opacity=".8"/>'
                          f'<polyline points="{edge}" fill="none" stroke="{col[c]}" stroke-width="1.6" stroke-linejoin="round"/>')
             base = vals
-        s.add(f'<clipPath id="reveal"><rect x="{x0}" y="{y0 - 10}" width="{x1 - x0}" height="{y1 - y0 + 12}" class="rv"/></clipPath>'
-              f'<g clip-path="url(#reveal)">{"".join(paths)}</g>')
-        s.css.append(f".rv{{animation:rv 1.6s cubic-bezier(.3,.7,.2,1)}}@keyframes rv{{from{{width:0}}to{{width:{x1 - x0}px}}}}")
+        s.add("".join(paths))
         lx = 24
         for label, (_, _, c) in zip(stats, REPOS):
             s.add(f'<circle cx="{lx + 5}" cy="274" r="5" fill="{col[c]}"/>')
             w = s.text(lx + 16, 278.5, label, "sans-500", 12.5, "fg")
-            w += s.text(lx + 22 + w, 278.5, k(stats[label]["lines"]), "mono-400", 11.5, "muted")
+            w += s.text(lx + 22 + w, 278.5, k(stats[label]["lines"]), "sans-400", 12.5, "muted")
             lx += w + 44
         return s
     return build
 
 
-def bars_card(stats, title, key, note, fmt=k):
-    rows = sorted(((lab, stats[lab][key], c) for lab, (_, _, c) in zip(stats, REPOS) if stats[lab][key]),
-                  key=lambda r: -r[1])
-
-    def build(theme):
-        s = Svg(412, 252, theme)
-        col = SERIES[theme]
-        s.rect(.5, .5, 411, 251, rx=12, fill="panel", stroke="border")
-        s.text(20, 36, title, "sans-600", 16, "fg")
-        total = sum(r[1] for r in rows)
-        s.text(392, 38, fmt(total), "sans-700", 24, "fg", anchor="end", spacing=-.5)
-        mx = max(r[1] for r in rows)
-        for i, (lab, v, c) in enumerate(rows):
-            y = 68 + i * 30
-            s.text(20, y + 12, lab, "sans-400", 13, "fg")
-            w = max(4, 196 * v / mx)
-            s.rect(124, y + 2, 196, 12, rx=6, fill="canvas")
-            s.rect(124, y + 2, w, 12, rx=6, fill=col[c], cls="bar", extra=f' style="animation-delay:{i * .12:.2f}s"')
-            s.text(392, y + 12.5, fmt(v), "mono-400", 11.5, "muted", anchor="end")
-        s.css.append(".bar{transform-box:fill-box;transform-origin:left;animation:bar 1s cubic-bezier(.3,.7,.2,1) backwards}"
-                     "@keyframes bar{from{transform:scaleX(0)}}")
-        note(s, theme)
-        return s
-    return build
 
 
-def languages_note(stats):
+def tests_and_languages(stats):
+    """One panel, two halves: tests per project and the language split, no repeated totals."""
     langs = {}
     for v in stats.values():
         for lang, n in v["langs"].items():
             langs[lang] = langs.get(lang, 0) + n
-    total = sum(langs.values())
+    total_l = sum(langs.values())
     top = sorted(langs.items(), key=lambda kv: -kv[1])
-    shown = [(l, n) for l, n in top if n / total >= .02][:3]
-    rest = total - sum(n for _, n in shown)
+    shown = [(l, n) for l, n in top if n / total_l >= .02][:3]
+    rest = total_l - sum(n for _, n in shown)
     bar = shown + ([("Other", rest)] if rest else [])
+    rows = sorted(((lab, stats[lab]["tests"], c) for lab, (_, _, c) in zip(stats, REPOS) if stats[lab]["tests"]),
+                  key=lambda r: -r[1])
 
-    def note(s, theme):
-        s.text(20, 196, "Languages", "sans-600", 13, "fg")
-        x = 20
-        s.add('<clipPath id="lb"><rect x="20" y="204" width="372" height="8" rx="4"/></clipPath><g clip-path="url(#lb)">')
+    def build(theme):
+        s = Svg(840, 196, theme)
+        col = SERIES[theme]
+        s.rect(.5, .5, 839, 195, rx=12, fill="panel", stroke="border")
+        s.add(f'<path d="M440 24V172" stroke="{s.t["border"]}"/>')
+        s.text(24, 38, f"{sum(r[1] for r in rows)} automated tests", "sans-600", 16, "fg")
+        s.text(24, 58, "As pytest collects them from each tests/ folder", "sans-400", 12.5, "muted")
+        mx = max(r[1] for r in rows)
+        for i, (lab, v, c) in enumerate(rows):
+            y = 86 + i * 28
+            s.text(24, y + 11, lab, "sans-400", 13, "fg")
+            s.rect(128, y + 1, 220 * v / mx, 12, rx=3, fill=col[c])
+            s.text(128 + 220 * v / mx + 8, y + 11.5, str(v), "mono-400", 11.5, "muted")
+        s.text(464, 38, "Languages", "sans-600", 16, "fg")
+        s.text(464, 58, "Share of lines of code", "sans-400", 12.5, "muted")
+        s.add('<clipPath id="lb"><rect x="464" y="86" width="352" height="10" rx="3"/></clipPath><g clip-path="url(#lb)">')
+        x = 464
         for lang, n in bar:
-            w = 372 * n / total
-            s.rect(x, 204, w + .5, 8, fill=LANG[lang])
+            w = 352 * n / total_l
+            s.rect(x, 86, max(w - 2, 1), 10, fill=LANG[lang])
             x += w
         s.add("</g>")
-        x = 20
-        for lang, n in shown:
-            s.add(f'<circle cx="{x + 4}" cy="230" r="4" fill="{LANG[lang]}"/>')
-            w = s.text(x + 13, 234, lang, "sans-500", 12, "fg")
-            w += s.text(x + 17 + w, 234, f"{100 * n / total:.1f}%", "sans-400", 12, "muted")
-            x += w + 30
-    return note
-
-
-def tests_note(s, theme):
-    s.add(f'<path d="M20 {176.5}H392" stroke="{s.t["border"]}"/>')
-    s.icon("oct", "check", 20, 192, 16, "green")
-    s.text(44, 204.5, "Plus a 21-workbook ground-truth eval for ExcelMCP", "sans-500", 12.5, "fg")
-    s.text(20, 232, "Counted the way pytest collects them, from each tests/ folder", "sans-400", 11.5, "muted")
-
-
-# ─────────────────────────────── contact buttons ───────────────────────────────
-def button(ic, label):
-    def build(theme):
-        w = round(measure(label, "sans-500", 14) + 52)
-        s = Svg(w, 36, theme)
-        s.rect(.5, .5, w - 1, 35, rx=6, fill="panel", stroke="border")
-        s.icon("oct", ic, 14, 10, 16, "muted")
-        s.text(38, 23, label, "sans-500", 14, "fg")
+        for i, (lang, n) in enumerate(bar):
+            ly = 124 + i * 22
+            if ly > 180:
+                break
+            s.add(f'<circle cx="469" cy="{ly - 4}" r="5" fill="{LANG[lang]}"/>')
+            s.text(482, ly, lang, "sans-400", 13, "fg")
+            s.text(816, ly, f"{100 * n / total_l:.1f}%", "mono-400", 11.5, "muted", anchor="end")
         return s
     return build
 
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    save("header", header, "Karunya Muddana. I build LLM agents that cite their sources.")
-    save("facts", facts, "9.15 CGPA; freelancing since 2024; Tareekh team lead at Hack with Hyderabad 3.0; 21-workbook eval")
-    for name, build in CARDS.items():
-        save(name, build, name.replace("card-", ""))
-    save("stack", stack, "Tech stack")
-    stats = collect()
-    total, tests = sum(v["lines"] for v in stats.values()), sum(v["tests"] for v in stats.values())
-    save("graph-growth", growth_chart(stats), f"{k(total)} lines of code written across four public projects")
-    save("graph-code", bars_card(stats, "Lines of code", "lines", languages_note(stats)), "Lines of code by project and languages")
-    save("graph-tests", bars_card(stats, "Automated tests", "tests", tests_note, fmt=str), f"{tests} automated tests")
-    save("btn-portfolio", button("globe", "Portfolio"), "Portfolio")
-    save("btn-linkedin", button("person", "LinkedIn"), "LinkedIn")
-    save("btn-email", button("mail", "Email"), "Email")
-    for f in sorted(os.listdir(OUT)):
+    for f in os.listdir(OUT):
         if f.endswith(".svg"):
-            print(f"{f:28s} {os.path.getsize(os.path.join(OUT, f)) / 1024:6.1f} KB")
+            os.remove(os.path.join(OUT, f))
+    stats = collect()
+    tests = {lab: v["tests"] for lab, v in stats.items()}
+    cards = {
+        "card-tareekh": card("tareekh", "Turns a lawyer's diary photos, notes and court orders into one cited memory per hearing.",
+                             ["Built at Hack with Hyderabad 3.0", f"{tests['Tareekh']} tests"], draw_tareekh),
+        "card-excelmcp": card("ExcelMCP", "An MCP server that answers questions about live Excel files in OneDrive through 14 tools.",
+                              ["MIT", f"{tests['ExcelMCP']} tests", "21-workbook eval"], draw_excel),
+        "card-native": card("Native", "An agent runtime that runs code in a sandbox and switches model provider when one is rate-limited.",
+                            ["Apache-2.0", "LangGraph", "Docker"], draw_native),
+        "card-smith": card("project-smith", "The planner turns a request into a graph of tool calls and runs independent steps in parallel.",
+                           ["MIT", f"{tests['project-smith']} tests"], draw_smith),
+    }
+    for name, build in cards.items():
+        save(name, build, name.replace("card-", ""))
+    total = sum(v["lines"] for v in stats.values())
+    save("graph-growth", growth_chart(stats), f"{k(total)} lines of code written across four public projects")
+    save("graph-tests-languages", tests_and_languages(stats), "Automated tests per project, and languages")
+    for f in sorted(os.listdir(OUT)):
+        print(f"{f:32s} {os.path.getsize(os.path.join(OUT, f)) / 1024:6.1f} KB")
