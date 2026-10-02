@@ -1,113 +1,32 @@
-<p align="center">
-  <img src="Karunya%20Muddana%20(2).png" width="100%" alt="banner"/>
+# Karunya Muddana
+
+I'm a second-year Computer Science (AI/ML) student at GITAM in Hyderabad, with a CGPA of 9.15. I build LLM agents that call tools and work with real data, and I try to make every answer traceable to the file, page or cell it came from.
+
+I've been freelancing since 2024. The first agent I built let a company's staff ask plain-English questions of their Excel workbooks, and each answer pointed to the sheet and cell it came from. They used it until the company moved to a commercial ERP.
+
+I'm looking for an AI/ML engineering internship. You can email me at [karunya.muddana@outlook.com](mailto:karunya.muddana@outlook.com), find me on [LinkedIn](https://www.linkedin.com/in/karunya-muddana), or see more on [my portfolio](https://karunya-muddana.github.io).
+
+## Projects
+
+<p>
+  <a href="https://github.com/Karunya-Muddana/tareekh"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-tareekh-dark.svg"><img src="assets/card-tareekh-light.svg" alt="Tareekh: turns a lawyer's diary photos, notes and court orders into one cited memory per hearing" width="49%"></picture></a>
+  <a href="https://github.com/Karunya-Muddana/ExcelMCP"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-excelmcp-dark.svg"><img src="assets/card-excelmcp-light.svg" alt="ExcelMCP: an MCP server for live Excel files in OneDrive, with 14 tools" width="49%"></picture></a>
+</p>
+<p>
+  <a href="https://github.com/Karunya-Muddana/Native"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-native-dark.svg"><img src="assets/card-native-light.svg" alt="Native: an agent runtime that switches model provider when one is rate-limited" width="49%"></picture></a>
+  <a href="https://github.com/Karunya-Muddana/project-smith"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-smith-dark.svg"><img src="assets/card-smith-light.svg" alt="project-smith: plans a request as a graph of tool calls and runs independent steps in parallel" width="49%"></picture></a>
 </p>
 
-<h1 align="center">Karunya Muddana</h1>
+I led the Tareekh team at Hack with Hyderabad 3.0. I also benchmarked 11 models for Ames house-price prediction, where a tuned XGBoost reached 0.1002 log-RMSE.
 
-<p align="center">
-  <b>Agentic AI • RAG • Systems Engineering</b><br/>
-  Building autonomous runtimes, retrieval pipelines, and production-style tooling.
-</p>
+## Code
 
-<p align="center">
-  <a href="mailto:Karunya.muddana@outlook.com"><img src="https://img.shields.io/badge/Email-111?style=for-the-badge&logo=microsoft-outlook&logoColor=white" /></a>
-  <a href="https://github.com/Karunya-Muddana"><img src="https://img.shields.io/badge/GitHub-111?style=for-the-badge&logo=github&logoColor=white" /></a>
-  <a href="https://www.linkedin.com/in/"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" /></a>
-</p>
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/graph-growth-dark.svg"><img src="assets/graph-growth-light.svg" alt="Lines of code written over time across project-smith, ExcelMCP, Native and Tareekh" width="100%"></picture>
 
-<br/>
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/graph-tests-languages-dark.svg"><img src="assets/graph-tests-languages-light.svg" alt="Automated tests per project, and the language split" width="100%"></picture>
 
----
+These are counted from the four public repos and rebuilt every Monday by [a GitHub Action](.github/workflows/refresh.yml).
 
-## ⚡ Featured Bento
+## Tools I use
 
-<table>
-<tr>
-<td width="50%" valign="top">
-
-### 🧠 Project Smith
-**Zero-trust autonomous agent runtime**  
-DAG planning • tool execution • retries • Mongo tracing  
-🔗 Repo → https://github.com/Karunya-Muddana/project-smith
-
-</td>
-<td width="50%" valign="top">
-
-### 🔎 Embedding Powered QA
-Retrieval-based QA using embeddings + search  
-Fast pipeline • clean architecture  
-🔗 Repo → https://github.com/Karunya-Muddana/embedding-powered-qa
-
-</td>
-</tr>
-
-<tr>
-<td width="50%" valign="top">
-
-### 📊 CBSE Result Analyzer
-Automated Excel report generation + analytics  
-Real-world automation pipeline  
-🔗 Repo → https://github.com/Karunya-Muddana/CBSE-Result-Analyzer-with-Excel-Reports-Python-Pandas-
-
-</td>
-<td width="50%" valign="top">
-
-### 🚘 License Plate Detector
-OpenCV pipeline for detection + extraction  
-Preprocessing • contours • OCR-ready output  
-🔗 Repo → https://github.com/Karunya-Muddana/Lisence-Plate-Detector
-
-</td>
-</tr>
-</table>
-
----
-
-## 🧰 Tech Stack
-<p align="center">
-  <img src="https://skillicons.dev/icons?i=python,pytorch,tensorflow,flask,react,ts,mongodb,docker,git,gcp&perline=10" />
-</p>
-
----
-
-## 📈 Metrics
-
-<table align="center">
-  <tr>
-    <td align="center" width="50%">
-      <img src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=Karunya-Muddana&theme=github_dark" />
-    </td>
-    <td align="center" width="50%">
-      <img src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=Karunya-Muddana&theme=github_dark" />
-    </td>
-  </tr>
-</table>
-
----
-
-## 🪄 What I’m Building
-- **Smith Runtime:** parallel DAG execution + human-readable trace logs  
-- **RAG:** query routing + caching + evals  
-- **MLOps:** dockerized pipelines + reproducibility  
-
----
-
-<details>
-  <summary><b>⚙️ Skill Snapshot</b></summary>
-  <br/>
-
-  - Agent orchestration: DAG planning, tool routing, retries, traceability  
-  - Backend: APIs, MongoDB persistence, automation workflows  
-  - AI: embeddings, RAG pipelines, evaluation mindset  
-
-</details>
-
-<br/>
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Anmol-Baranwal/Cool-GIFs-For-GitHub/main/assets/animated-divider.gif" width="100%" />
-</p>
-
-<p align="center">
-  <i>Ship systems. Make them reliable. Repeat.</i>
-</p>
+Python, SQL, TypeScript and C++. For AI work: MCP, LangGraph, RAG and embeddings, scikit-learn, XGBoost, Pandas and NumPy. For backends: FastAPI, PostgreSQL on Supabase, SQLite, the Microsoft Graph API and pytest. I deploy on Google Cloud and Vertex AI, with Docker.
