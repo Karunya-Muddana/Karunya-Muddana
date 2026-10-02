@@ -1,49 +1,26 @@
-<h1 align="center">Hi, I'm Karunya</h1>
-
-<p align="center"><samp>Agents. Retrieval. Receipts.</samp></p>
-
-<p align="center">
-  <a href="https://karunya-muddana.github.io"><img src="assets/badges/portfolio.svg" alt="Portfolio" height="28"></a>
-  <a href="https://www.linkedin.com/in/karunya-muddana"><img src="assets/badges/linkedin.svg" alt="LinkedIn" height="28"></a>
-  <a href="mailto:karunya.muddana@outlook.com"><img src="assets/badges/email.svg" alt="Email" height="28"></a>
-</p>
-
----
-
-I'm a second-year Computer Science (AI/ML) student at GITAM in Hyderabad. I build LLM agents that call tools and read real data, and I hold them to one rule: **every answer points back to where it came from**.
-
-The first one I shipped was for a company. Staff asked plain-English questions of their Excel workbooks and got answers traced to the file, sheet and cell. They used it every day, until the company moved to a commercial ERP.
-
-Right now I'm looking for an **AI/ML engineering internship**.
-
-## What I've Built
-
-- `2026-09` [**Tareekh**](https://github.com/Karunya-Muddana/tareekh): practice memory for Indian litigators. Turns diary photos, notes and court order sheets into one memory per hearing, with every sentence cited. Led the team at Hack with Hyderabad 3.0.
-- `2026-09` [**Native**](https://github.com/Karunya-Muddana/Native): an agent runtime that reads documents, runs Python in a network-disabled container, and falls back to another model provider when one is rate-limited.
-- `2026-08` [**ExcelMCP**](https://github.com/Karunya-Muddana/ExcelMCP): an MCP server for live Excel data. Values are always fetched live; only sheet structure is cached. Tested against 21 workbooks with known answers.
-- `2025-11` [**project-smith**](https://github.com/Karunya-Muddana/project-smith): a zero-trust agent runtime. You drop in tools and the planner builds the DAG.
-
-## Tech I Use
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/header-dark.svg"><img src="assets/header-light.svg" alt="Karunya Muddana. Open to AI/ML internships. I build LLM agents that cite their sources. B.Tech CS (AI/ML) at GITAM, Hyderabad." width="100%"></picture>
 
 <p>
-  <img src="assets/badges/python.svg" alt="Python" height="28">
-  <img src="assets/badges/fastapi.svg" alt="FastAPI" height="28">
-  <img src="assets/badges/langgraph.svg" alt="LangGraph" height="28">
-  <img src="assets/badges/mcp.svg" alt="MCP" height="28">
-  <img src="assets/badges/scikit-learn.svg" alt="scikit-learn" height="28">
-  <img src="assets/badges/pandas.svg" alt="Pandas" height="28">
-  <img src="assets/badges/postgresql.svg" alt="PostgreSQL" height="28">
-  <img src="assets/badges/sqlite.svg" alt="SQLite" height="28">
-  <img src="assets/badges/docker.svg" alt="Docker" height="28">
-  <img src="assets/badges/pytest.svg" alt="pytest" height="28">
-  <img src="assets/badges/google-cloud.svg" alt="Google Cloud" height="28">
-  <img src="assets/badges/nextjs.svg" alt="Next.js" height="28">
+  <a href="https://karunya-muddana.github.io"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/btn-portfolio-dark.svg"><img src="assets/btn-portfolio-light.svg" alt="Portfolio"></picture></a>
+  <a href="https://www.linkedin.com/in/karunya-muddana"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/btn-linkedin-dark.svg"><img src="assets/btn-linkedin-light.svg" alt="LinkedIn"></picture></a>
+  <a href="mailto:karunya.muddana@outlook.com"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/btn-email-dark.svg"><img src="assets/btn-email-light.svg" alt="Email"></picture></a>
 </p>
 
-## Activity
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/facts-dark.svg"><img src="assets/facts-light.svg" alt="9.15 CGPA at GITAM. An Excel agent used daily by a company's staff. Team lead of Tareekh at Hack with Hyderabad 3.0. 21 workbooks in ExcelMCP's ground-truth eval." width="100%"></picture>
 
-<p align="center">
-  <img src="metrics.svg" alt="Contribution calendar, commit habits and languages">
+The first agent I shipped was for a company: staff asked plain-English questions of their Excel workbooks and every answer came back traced to the file, sheet and cell. They used it daily until the company moved to a commercial ERP. Everything I've built since follows the same rule: **if an agent says it, it should be able to show where it came from.**
+
+### Selected work
+
+<p>
+  <a href="https://github.com/Karunya-Muddana/tareekh"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-tareekh-dark.svg"><img src="assets/card-tareekh-light.svg" alt="Tareekh: practice memory for Indian litigators" width="49%"></picture></a>
+  <a href="https://github.com/Karunya-Muddana/ExcelMCP"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-excelmcp-dark.svg"><img src="assets/card-excelmcp-light.svg" alt="ExcelMCP: MCP server for live Excel data" width="49%"></picture></a>
+</p>
+<p>
+  <a href="https://github.com/Karunya-Muddana/Native"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-native-dark.svg"><img src="assets/card-native-light.svg" alt="Native: multi-provider agent runtime" width="49%"></picture></a>
+  <a href="https://github.com/Karunya-Muddana/project-smith"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-smith-dark.svg"><img src="assets/card-smith-light.svg" alt="project-smith: zero-trust agent runtime" width="49%"></picture></a>
 </p>
 
-<p align="right"><sub>Redrawn every morning by <a href=".github/workflows/metrics.yml">a GitHub Action</a>.</sub></p>
+### Stack
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/stack-dark.svg"><img src="assets/stack-light.svg" alt="Python, SQL, TypeScript, C++. MCP, LangGraph, RAG, scikit-learn, XGBoost, Pandas. FastAPI, PostgreSQL, SQLite, Microsoft Graph, pytest. Google Cloud, Vertex AI, Docker, Git, Next.js." width="100%"></picture>
