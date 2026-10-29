@@ -1,4 +1,4 @@
-name: Refresh README graphs
+name: Refresh README images
 
 on:
   # Mondays, 06:13 IST
@@ -18,6 +18,8 @@ jobs:
           python-version: "3.12"
       - run: pip install fonttools brotli
       - run: python3 scripts/build.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Commit if anything changed
         run: |
           git config user.name "github-actions[bot]"

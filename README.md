@@ -1,10 +1,20 @@
-# Karunya Muddana
+<a href="https://karunya-muddana.github.io"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/header-dark.svg"><img src="assets/header-light.svg" alt="Karunya Muddana, AI engineer in Hyderabad. CGPA 9.15, 2 fixes merged upstream, 600+ students served, clients in 2 countries, 2 hackathon builds. Open to AI/ML internships." width="100%"></picture></a>
 
-I'm a second-year Computer Science (AI/ML) student at GITAM in Hyderabad, with a CGPA of 9.15. I build LLM agents that call tools and work with real data, and I try to make every answer traceable to the file, page or cell it came from.
+I'm a second-year Computer Science (AI/ML) student at GITAM. Right now I'm on a contract building document review for a healthcare certifier in Germany, where the job is checking that an uploaded certificate says what the applicant typed into the form.
 
-I've been freelancing since 2024. The first agent I built let a company's staff ask plain-English questions of their Excel workbooks, and each answer pointed to the sheet and cell it came from. They used it until the company moved to a commercial ERP.
+The first agent I shipped let a chemical manufacturer's staff ask plain-English questions of their Excel workbooks. Each answer pointed to the sheet and cell behind it, and they used it daily until the company moved to an ERP.
 
-I'm looking for an AI/ML engineering internship. You can email me at [karunya.muddana@outlook.com](mailto:karunya.muddana@outlook.com), find me on [LinkedIn](https://www.linkedin.com/in/karunya-muddana), or see more on [my portfolio](https://karunya-muddana.github.io).
+I'm looking for an AI/ML engineering internship. Email [karunya.muddana@outlook.com](mailto:karunya.muddana@outlook.com), or find me on [LinkedIn](https://www.linkedin.com/in/karunya-muddana) and [my portfolio](https://karunya-muddana.github.io).
+
+## Timeline
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/timeline-dark.svg"><img src="assets/timeline-light.svg" alt="Timeline: AI engineer contract for a German healthcare certifier (Oct 2026); open-source contributor to IPython, git-cola, icalendar and scikit-learn (Oct 2026); led Tareekh at Hack with Hyderabad 3.0 (Sep 2026); built Native for Smart India Hackathon 2026 (Sep 2026); published engraph on PyPI (Aug 2026); open-sourced ExcelMCP (Aug 2026); freelance AI engineer for a chemical manufacturer (2024 onward); house price model at 0.1002 log-RMSE (2025); CBSE result analyzer used for 600 students (Jun 2025); B.Tech at GITAM, CGPA 9.15." width="100%"></picture>
+
+## Open source
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/upstream-dark.svg"><img src="assets/upstream-light.svg" alt="Pull requests to IPython, git-cola, icalendar and scikit-learn" width="100%"></picture>
+
+[ipython#15431](https://github.com/ipython/ipython/pull/15431) · [git-cola#1654](https://github.com/git-cola/git-cola/pull/1654) · [icalendar#1886](https://github.com/collective/icalendar/pull/1886) · [scikit-learn#35124](https://github.com/scikit-learn/scikit-learn/pull/35124)
 
 ## Projects
 
@@ -17,7 +27,7 @@ I'm looking for an AI/ML engineering internship. You can email me at [karunya.mu
   <a href="https://github.com/Karunya-Muddana/project-smith"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-smith-dark.svg"><img src="assets/card-smith-light.svg" alt="project-smith: plans a request as a graph of tool calls and runs independent steps in parallel" width="49%"></picture></a>
 </p>
 
-I led the Tareekh team at Hack with Hyderabad 3.0. I also benchmarked 11 models for Ames house-price prediction, where a tuned XGBoost reached 0.1002 log-RMSE.
+Also: [engraph](https://pypi.org/project/engraph/), long-term memory for Claude Code (`pip install engraph`), and the [CBSE result analyzer](https://github.com/Karunya-Muddana/CBSE-Result-Analyzer-with-Excel-Reports-Python-Pandas-) teachers at two schools used on their board results.
 
 ## Code
 
@@ -25,8 +35,8 @@ I led the Tareekh team at Hack with Hyderabad 3.0. I also benchmarked 11 models 
 
 <picture><source media="(prefers-color-scheme: dark)" srcset="assets/graph-tests-languages-dark.svg"><img src="assets/graph-tests-languages-light.svg" alt="Automated tests per project, and the language split" width="100%"></picture>
 
-These are counted from the four public repos and rebuilt every Monday by [a GitHub Action](.github/workflows/refresh.yml).
+The graphs are counted from the four public repos, and the pull request states come from the GitHub API. [A GitHub Action](.github/workflows/refresh.yml) rebuilds all of it every Monday.
 
 ## Tools I use
 
-Python, SQL, TypeScript and C++. For AI work: MCP, LangGraph, RAG and embeddings, scikit-learn, XGBoost, Pandas and NumPy. For backends: FastAPI, PostgreSQL on Supabase, SQLite, the Microsoft Graph API and pytest. I deploy on Google Cloud and Vertex AI, with Docker.
+Python, SQL, TypeScript and C++. For AI work: MCP, LangGraph, RAG and embeddings, OCR, scikit-learn, XGBoost, Pandas and NumPy. For backends: FastAPI, PostgreSQL on Supabase, SQLite, the Microsoft Graph API and pytest. I deploy on Google Cloud and Vertex AI, with Docker.

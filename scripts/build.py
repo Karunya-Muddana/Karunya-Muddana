@@ -11,6 +11,7 @@ import ast
 import base64
 import datetime as dt
 import io
+import json
 import os
 import re
 import subprocess
@@ -33,14 +34,14 @@ FONT_SRC = {
     "mono-400": "githubnext/monaspace/main/fonts/Web%20Fonts/Static%20Web%20Fonts/Monaspace%20Neon/MonaspaceNeon-Regular.woff2",
 }
 
-# GitHub Primer colours
+# Tonal surfaces with no outlines; four accents (teal, coral, amber, indigo) of my own
 THEMES = {
-    "dark": dict(canvas="#0d1117", panel="#151b23", border="#3d444d", fg="#f0f6fc", muted="#9198a1",
-                 subtle="#656c76", green="#3fb950", greenBg="#2ea04326", blue="#4493f8", blueBg="#388bfd26",
-                 orange="#f0883e", red="#f85149", redBg="#f8514926", hi="#388bfd1f"),
-    "light": dict(canvas="#ffffff", panel="#f6f8fa", border="#d1d9e0", fg="#1f2328", muted="#59636e",
-                  subtle="#818b98", green="#1a7f37", greenBg="#1a7f371f", blue="#0969da", blueBg="#0969da1a",
-                  orange="#bc4c00", red="#d1242f", redBg="#d1242f1a", hi="#0969da14"),
+    "dark": dict(canvas="#0d1117", panel="#161b22", raised="#1f2630", border="#2b323c", fg="#eef1f5", muted="#9aa3ad",
+                 subtle="#6b7480", green="#4fd1b5", greenBg="#4fd1b51f", blue="#8c9bff", blueBg="#8c9bff1f",
+                 orange="#ffb35c", red="#ff8a6b", redBg="#ff8a6b1f", hi="#8c9bff1a"),
+    "light": dict(canvas="#ffffff", panel="#f4f5f7", raised="#e9ecf0", border="#dde1e6", fg="#16191d", muted="#5a626c",
+                  subtle="#8a929c", green="#0b8a74", greenBg="#0b8a7414", blue="#4c5bd4", blueBg="#4c5bd414",
+                  orange="#c97a12", red="#d4553a", redBg="#d4553a14", hi="#4c5bd40f"),
 }
 LANG = {"Python": "#3572A5", "TypeScript": "#3178c6"}
 
@@ -127,7 +128,7 @@ class Svg:
 def save(name, build, title):
     for theme in THEMES:
         svg = build(theme)
-        with open(os.path.join(OUT, f"{name}-{theme}.svg"), "w") as f:
+        with open(os.path.join(OUT, f"{name}-{theme}.svg"), "w", encoding="utf-8", newline="\n") as f:
             f.write(svg.render(title))
 
 
@@ -149,7 +150,7 @@ def wrap(text, font, size, width):
 def card(name, desc, footer, draw):
     def build(theme):
         s = Svg(412, 236, theme)
-        s.rect(.5, .5, 411, 235, rx=8, fill="panel", stroke="border")
+        s.rect(.5, .5, 411, 235, rx=20, fill="panel")
         s.icon("oct", "repo", 20, 21, 16, "muted")
         s.text(44, 34, name, "sans-600", 16, "blue")
         for i, line in enumerate(wrap(desc, "sans-400", 13.5, 372)[:2]):
@@ -207,7 +208,7 @@ def draw_smith(s, t, x, y):
     # a saved run from the repo: smith_dag_1776680299.json
     def node(cx, cy, tool, note):
         w = max(measure(tool, "mono-400", 11), measure(note, "sans-400", 11)) + 20
-        s.rect(cx - w / 2 + .5, cy - 17.5, w, 35, rx=6, fill="canvas", stroke="border")
+        s.rect(cx - w / 2 + .5, cy - 17.5, w, 35, rx=10, fill="canvas")
         s.text(cx, cy - 2, tool, "mono-400", 11, "fg", anchor="middle")
         s.text(cx, cy + 12, note, "sans-400", 11, "muted", anchor="middle")
         return w / 2
@@ -229,8 +230,8 @@ def draw_smith(s, t, x, y):
 # Oldest first; this is also the stacking order of the growth chart.
 REPOS = [("project-smith", "project-smith", "purple"), ("ExcelMCP", "ExcelMCP", "green"),
          ("Native", "Native", "orange"), ("tareekh", "Tareekh", "blue")]
-SERIES = {"dark": dict(purple="#ab7df8", green="#3fb950", orange="#db6d28", blue="#4493f8"),
-          "light": dict(purple="#8250df", green="#1a7f37", orange="#bc4c00", blue="#0969da")}
+SERIES = {"dark": dict(purple="#8c9bff", green="#4fd1b5", orange="#ffb35c", blue="#ff8a6b"),
+          "light": dict(purple="#4c5bd4", green="#0b8a74", orange="#c97a12", blue="#d4553a")}
 CODE_EXT = {".py": "Python", ".ts": "TypeScript", ".tsx": "TypeScript", ".js": "JavaScript", ".jsx": "JavaScript",
             ".html": "HTML", ".css": "CSS", ".sql": "SQL", ".sh": "Shell"}
 LANG.update({"HTML": "#e34c26", "CSS": "#663399", "JavaScript": "#f1e05a", "Other": "#8b949e"})
@@ -307,7 +308,7 @@ def growth_chart(stats):
     def build(theme):
         s = Svg(840, 300, theme)
         t, col = s.t, SERIES[theme]
-        s.rect(.5, .5, 839, 299, rx=12, fill="panel", stroke="border")
+        s.rect(.5, .5, 839, 299, rx=24, fill="panel")
         total = sum(v["lines"] for v in stats.values())
         s.text(24, 38, f"{k(total)} lines of code", "sans-600", 16, "fg")
         start = min(dt.date.fromisoformat(v["growth"][0][0]) for v in stats.values()).replace(day=1)
@@ -376,7 +377,7 @@ def tests_and_languages(stats):
     def build(theme):
         s = Svg(840, 196, theme)
         col = SERIES[theme]
-        s.rect(.5, .5, 839, 195, rx=12, fill="panel", stroke="border")
+        s.rect(.5, .5, 839, 195, rx=24, fill="panel")
         s.add(f'<path d="M440 24V172" stroke="{s.t["border"]}"/>')
         s.text(24, 38, f"{sum(r[1] for r in rows)} automated tests", "sans-600", 16, "fg")
         s.text(24, 58, "As pytest collects them from each tests/ folder", "sans-400", 12.5, "muted")
@@ -406,6 +407,167 @@ def tests_and_languages(stats):
     return build
 
 
+# ─────────────────────────────── header, timeline, upstream ───────────────────────────────
+STATS = [("9.15", "CGPA", "B.Tech CS (AI & ML)"), ("2", "Fixes merged upstream", "IPython · git-cola"),
+         ("600+", "Students served", "by the CBSE analyzer"), ("2", "Countries with clients", "India · Germany"),
+         ("2", "Hackathon builds", "SIH 2026 · HwH 3.0")]
+
+
+def header():
+    def build(theme):
+        s = Svg(840, 268, theme)
+        t, col = s.t, SERIES[theme]
+        s.rect(0, 0, 840, 268, rx=28, fill="panel")
+        # a small cluster of flat shapes on the right, one per accent
+        gx, gy, c = 676, 36, 56
+        s.add(f'<circle cx="{gx + c / 2}" cy="{gy + c / 2}" r="{c / 2}" fill="{col["green"]}"/>'
+              f'<path d="M{gx + c + 10} {gy + c}V{gy}A{c} {c} 0 0 1 {gx + 2 * c + 10} {gy + c}Z" fill="{col["blue"]}"/>'
+              f'<rect x="{gx}" y="{gy + c + 10}" width="{c}" height="{c}" rx="16" fill="{col["orange"]}"/>'
+              f'<path d="M{gx + c + 10} {gy + c + 10}H{gx + 2 * c + 10}A{c / 2} {c / 2} 0 0 1 {gx + c + 10} {gy + c + 10}Z" '
+              f'fill="{col["purple"]}" class="spin"/>')
+        s.css.append(f"@keyframes r{{0%,70%{{transform:rotate(0)}}100%{{transform:rotate(180deg)}}}}"
+                     f".spin{{transform-origin:{gx + c * 1.5 + 10}px {gy + c * 1.5 + 10}px;animation:r 6s cubic-bezier(.2,0,0,1) infinite alternate}}")
+        s.text(36, 66, "Karunya Muddana", "sans-600", 34, "fg", spacing=-.6)
+        s.text(36, 94, "AI engineer. I build LLM agents that work on real data", "sans-400", 15, "muted")
+        s.text(36, 114, "and cite where every answer came from.", "sans-400", 15, "muted")
+        chip = "Open to AI/ML internships"
+        w = measure(chip, "sans-500", 12.5) + 40
+        s.rect(36, 132, w, 30, rx=15, fill="greenBg")
+        s.add(f'<circle cx="54" cy="147" r="7" fill="{t["green"]}" class="pulse" opacity="0"/>'
+              f'<circle cx="54" cy="147" r="4" fill="{t["green"]}"/>')
+        s.css.append("@keyframes p{0%{opacity:.5;transform:scale(.6)}100%{opacity:0;transform:scale(1.7)}}"
+                     ".pulse{transform-box:fill-box;transform-origin:center;animation:p 2.4s ease-out infinite}")
+        s.text(66, 151.5, chip, "sans-500", 12.5, "green")
+        x = 36 + w + 20
+        for name, label in [("location", "Hyderabad, India"), ("mortar-board", "GITAM, class of 2029")]:
+            s.icon("oct", name, x, 140, 14, "subtle")
+            x += 20 + s.text(x + 20, 151.5, label, "sans-400", 12.5, "muted") + 20
+        # stats as tonal tiles
+        n, gap, x0 = len(STATS), 10, 24
+        tw = (840 - 2 * x0 - gap * (n - 1)) / n
+        accents = ["green", "blue", "orange", "purple", "green"]
+        for i, (num, label, note) in enumerate(STATS):
+            x = x0 + i * (tw + gap)
+            s.rect(x, 180, tw, 64, rx=16, fill="raised")
+            s.add(f'<circle cx="{x + tw - 16:.1f}" cy="196" r="4" fill="{col[accents[i]]}"/>')
+            s.text(x + 16, 210, num, "sans-600", 21, "fg", spacing=-.3)
+            s.text(x + 16, 230, label, "sans-400", 11.5, "muted")
+        return s
+    return build
+
+
+# newest first: (when, title, tag, where, detail)
+TIMELINE = [
+    ("Oct 2026 – now", "AI engineer, contract", "work", "Healthcare certification project · Germany (remote)",
+     "Document review that checks uploaded certificates against the application form. Caught valid phone scans "
+     "being read as expired, and added a second independent reading backed by a 33-case test set with tampered files."),
+    ("Oct 2026 – now", "Open-source contributor", "upstream", "IPython · git-cola · icalendar · scikit-learn",
+     "Two fixes merged within two weeks of the first PR, two more in review."),
+    ("Sep 2026", "Led the Tareekh team", "hackathon", "Hack with Hyderabad 3.0",
+     "Turns a lawyer's diary photos, notes and court orders into one cited memory per hearing."),
+    ("Sep 2026", "Built Native", "hackathon", "Smart India Hackathon 2026",
+     "A local-first agent workbench with 22 tools that keeps running through rate limits and works offline."),
+    ("Aug 2026", "Published engraph on PyPI", "release", "pip install engraph",
+     "Long-term memory for AI coding assistants, so the next session doesn't start from zero."),
+    ("Aug 2026", "Open-sourced ExcelMCP", "release", "MCP server · MIT",
+     "The engine behind the manufacturer's assistant: live Excel answers with the file, sheet and cell behind each number."),
+    ("2024 – now", "Freelance AI engineer", "work", "Chemical manufacturer · Hyderabad",
+     "Built an assistant that let staff question their Excel data in plain English. Used daily until the company moved to an ERP."),
+    ("2025", "House price prediction", "ml", "Ames housing dataset",
+     "Benchmarked 11 models; a tuned XGBoost reached 0.1002 log-RMSE and priced 79% of houses within 10%."),
+    ("Jun 2025", "CBSE result analyzer", "tool", "Used by teachers at two schools",
+     "Turns the board's raw gazette files into Excel and PDF reports for 600 students' results."),
+    ("2025 – 2029", "B.Tech, Computer Science (AI & ML)", "edu", "GITAM University, Hyderabad", "CGPA 9.15 / 10."),
+]
+TAGS = {"work": "green", "upstream": "purple", "hackathon": "orange", "release": "blue", "ml": "purple", "tool": "green",
+        "edu": "orange"}
+
+
+def timeline():
+    def build(theme):
+        rows = [(e, wrap(e[4], "sans-400", 12.5, 700)) for e in TIMELINE]
+        h = 70 + sum(54 + 18 * len(lines) for _, lines in rows) - 10
+        s = Svg(840, h, theme)
+        t, col = s.t, SERIES[theme]
+        s.rect(.5, .5, 839, h - 1, rx=24, fill="panel")
+        s.text(28, 38, "$", "mono-400", 12, "green")
+        s.text(42, 38, "git log --graph --author=karunya", "mono-400", 12, "subtle")
+        y, rail = 70, 40
+        last = y + sum(54 + 18 * len(lines) for _, lines in rows[:-1])
+        s.add(f'<path d="M{rail} {y}V{last}" stroke="{t["border"]}" stroke-width="2"/>')
+        for i, ((when, title, tag, where, _), lines) in enumerate(rows):
+            c = col[TAGS[tag]]
+            if i == 0:
+                s.add(f'<circle cx="{rail}" cy="{y}" r="7" fill="{t["panel"]}" stroke="{c}" stroke-width="2"/>'
+                      f'<circle cx="{rail}" cy="{y}" r="3" fill="{c}"/>')
+            else:
+                s.add(f'<circle cx="{rail}" cy="{y}" r="5" fill="{t["panel"]}" stroke="{c}" stroke-width="2"/>')
+            w = s.text(64, y + 5, title, "sans-600", 15, "fg")
+            tw = measure(tag, "mono-400", 10.5) + 14
+            s.add(f'<rect x="{64 + w + 10:.1f}" y="{y - 8}" width="{tw:.1f}" height="18" rx="9" fill="{c}" fill-opacity=".14"/>')
+            s.text(64 + w + 17, y + 4.5, tag, "mono-400", 10.5, c)
+            s.text(816, y + 5, when, "mono-400", 11.5, "subtle", anchor="end")
+            s.text(64, y + 25, where, "sans-500", 12.5, "fg")
+            for j, line in enumerate(lines):
+                s.text(64, y + 44 + j * 18, line, "sans-400", 12.5, "muted")
+            y += 54 + 18 * len(lines)
+        return s
+    return build
+
+
+# Fixes sent to other people's projects. Title and state are refreshed from the GitHub API;
+# the values here are what the image shows if that call fails.
+UPSTREAM = [("ipython/ipython", 15431, "Fix WebP detection and size parsing in display.Image", "merged"),
+            ("git-cola/git-cola", 1654, "cmds: report errors when opening a repository fails", "merged"),
+            ("collective/icalendar", 1886, "Fix vUTCOffset.from_ical reading unsigned offsets wrongly", "open"),
+            ("scikit-learn/scikit-learn", 35124, "FIX make Bunch.copy return a Bunch instead of a dict", "open")]
+
+
+def fetch_prs():
+    prs = []
+    for repo, n, title, state in UPSTREAM:
+        req = urllib.request.Request(f"https://api.github.com/repos/{repo}/pulls/{n}",
+                                     headers={"Accept": "application/vnd.github+json"})
+        if os.environ.get("GITHUB_TOKEN"):
+            req.add_header("Authorization", f"Bearer {os.environ['GITHUB_TOKEN']}")
+        try:
+            with urllib.request.urlopen(req, timeout=20) as r:
+                pr = json.load(r)
+            title, state = pr["title"], "merged" if pr.get("merged_at") else pr["state"]
+        except Exception as e:
+            print(f"keeping saved state for {repo}#{n}: {e}")
+        prs.append((repo, n, title, state))
+    return prs
+
+
+def upstream(prs):
+    label = {"merged": "Merged", "open": "In review", "closed": "Closed"}
+
+    def build(theme):
+        h = 76 + 58 * len(prs)
+        s = Svg(840, h, theme)
+        t = s.t
+        s.rect(.5, .5, 839, h - 1, rx=24, fill="panel")
+        merged = sum(p[3] == "merged" for p in prs)
+        s.text(24, 38, f"{merged} merged, {sum(p[3] == 'open' for p in prs)} in review", "sans-600", 16, "fg")
+        s.text(24, 58, "Pull requests to libraries I use", "sans-400", 12.5, "muted")
+        for i, (repo, n, title, state) in enumerate(prs):
+            y = 76 + i * 58
+            if i:
+                s.add(f'<path d="M24 {y + .5}H816" stroke="{t["border"]}"/>')
+            c = {"merged": SERIES[theme]["purple"], "open": SERIES[theme]["orange"]}.get(state, t["red"])
+            s.icon("oct", "git-merge" if state == "merged" else "git-pull-request", 24, y + 14, 16, c)
+            w = s.text(52, y + 26, repo, "sans-600", 13.5, "fg")
+            s.text(52 + w + 8, y + 26, f"#{n}", "mono-400", 12, "subtle")
+            s.text(52, y + 45, title, "sans-400", 12.5, "muted")
+            lab = label.get(state, state)
+            lw = measure(lab, "sans-500", 11.5) + 20
+            s.rect(816 - lw, y + 17, lw, 23, rx=11.5, fill=c, extra=' fill-opacity=".14"')
+            s.text(816 - lw / 2, y + 32.5, lab, "sans-500", 11.5, c, anchor="middle")
+        return s
+    return build
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for f in os.listdir(OUT):
@@ -428,5 +590,8 @@ if __name__ == "__main__":
     total = sum(v["lines"] for v in stats.values())
     save("graph-growth", growth_chart(stats), f"{k(total)} lines of code written across four public projects")
     save("graph-tests-languages", tests_and_languages(stats), "Automated tests per project, and languages")
+    save("header", header(), "Karunya Muddana, AI engineer. Open to AI/ML internships.")
+    save("timeline", timeline(), "Timeline of work, releases and hackathons")
+    save("upstream", upstream(fetch_prs()), "Pull requests merged into and in review at open-source libraries")
     for f in sorted(os.listdir(OUT)):
         print(f"{f:32s} {os.path.getsize(os.path.join(OUT, f)) / 1024:6.1f} KB")
