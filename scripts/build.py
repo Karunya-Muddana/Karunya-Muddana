@@ -34,14 +34,16 @@ FONT_SRC = {
     "mono-400": "githubnext/monaspace/main/fonts/Web%20Fonts/Static%20Web%20Fonts/Monaspace%20Neon/MonaspaceNeon-Regular.woff2",
 }
 
-# Tonal surfaces with no outlines; four accents (teal, coral, amber, indigo) of my own
+# Five accents, used as flat fills. Text stays neutral; on the dark theme the blue and green
+# used for text are lighter tints so they stay readable.
+PALETTE = dict(green="#00C853", blue="#2962FF", orange="#FF6D00", red="#E52535", gold="#FFD600")
 THEMES = {
     "dark": dict(canvas="#0d1117", panel="#161b22", raised="#1f2630", border="#2b323c", fg="#eef1f5", muted="#9aa3ad",
-                 subtle="#6b7480", green="#4fd1b5", greenBg="#4fd1b51f", blue="#8c9bff", blueBg="#8c9bff1f",
-                 orange="#ffb35c", red="#ff8a6b", redBg="#ff8a6b1f", hi="#8c9bff1a"),
+                 subtle="#6b7480", green="#3ddc84", greenBg="#00C8531f", blue="#7a9cff", blueBg="#2962FF26",
+                 orange="#FF8A3D", red="#FF5C69", redBg="#E5253526", hi="#2962FF1a"),
     "light": dict(canvas="#ffffff", panel="#f4f5f7", raised="#e9ecf0", border="#dde1e6", fg="#16191d", muted="#5a626c",
-                  subtle="#8a929c", green="#0b8a74", greenBg="#0b8a7414", blue="#4c5bd4", blueBg="#4c5bd414",
-                  orange="#c97a12", red="#d4553a", redBg="#d4553a14", hi="#4c5bd40f"),
+                  subtle="#8a929c", green="#00873a", greenBg="#00C8531a", blue="#2962FF", blueBg="#2962FF14",
+                  orange="#C24E00", red="#C8102E", redBg="#E525351a", hi="#2962FF0f"),
 }
 LANG = {"Python": "#3572A5", "TypeScript": "#3178c6"}
 
@@ -147,7 +149,7 @@ def wrap(text, font, size, width):
 # ─────────────────────────────── project cards ───────────────────────────────
 # Laid out like GitHub's pinned repositories. The drawing on each card uses real
 # content from that repo (tool names, test cases, a saved run), never sample data.
-def card(name, desc, footer, draw):
+def card(name, desc, footer, draw, lang="Python"):
     def build(theme):
         s = Svg(412, 236, theme)
         s.rect(.5, .5, 411, 235, rx=20, fill="panel")
@@ -155,9 +157,10 @@ def card(name, desc, footer, draw):
         s.text(44, 34, name, "sans-600", 16, "blue")
         for i, line in enumerate(wrap(desc, "sans-400", 13.5, 372)[:2]):
             s.text(20, 62 + i * 20, line, "sans-400", 13.5, "muted")
-        draw(s, s.t, 20, 98)
-        s.add(f'<circle cx="26" cy="212" r="6" fill="{LANG["Python"]}"/>')
-        x = 38 + s.text(38, 216.5, "Python", "sans-400", 12.5, "muted") + 18
+        if draw:
+            draw(s, s.t, 20, 98)
+        s.add(f'<circle cx="26" cy="212" r="6" fill="{LANG.get(lang, LANG["Other"])}"/>')
+        x = 38 + s.text(38, 216.5, lang, "sans-400", 12.5, "muted") + 18
         for item in footer:
             x += s.text(x, 216.5, item, "sans-400", 12.5, "muted") + 18
         return s
@@ -226,12 +229,72 @@ def draw_smith(s, t, x, y):
         node(*n)
 
 
+# Hand-written copy for repos I know; anything else that ranks in falls back to its GitHub description.
+KNOWN = {
+    "tareekh": ("Turns a lawyer's diary photos, notes and court orders into one cited memory per hearing.",
+                lambda t: ["Built at Hack with Hyderabad 3.0", f"{t.get('Tareekh', 0)} tests"], "draw_tareekh"),
+    "ExcelMCP": ("An MCP server that answers questions about live Excel files in OneDrive through 14 tools.",
+                 lambda t: ["MIT", f"{t.get('ExcelMCP', 0)} tests", "21-workbook eval"], "draw_excel"),
+    "Native": ("An agent runtime that runs code in a sandbox and switches model provider when one is rate-limited.",
+               lambda t: ["Apache-2.0", "LangGraph", "Docker"], "draw_native"),
+    "project-smith": ("The planner turns a request into a graph of tool calls and runs independent steps in parallel.",
+                      lambda t: ["MIT", f"{t.get('project-smith', 0)} tests"], "draw_smith"),
+}
+SKIP = {"Karunya-Muddana", "Karunya-Muddana.github.io"}
+
+
+def top_repos(n=4):
+    """Own, non-fork repos with a description, by stars and then by last push."""
+    try:
+        repos = api("users/Karunya-Muddana/repos?per_page=100&type=owner")
+    except Exception as e:
+        print(f"repo ranking failed, using the saved four: {e}")
+        return [dict(name=k, language="Python" if k != "tareekh" else "TypeScript", description="", license=None)
+                for k in KNOWN]
+    repos = [r for r in repos if not r["fork"] and not r["archived"] and r["description"] and r["name"] not in SKIP]
+    repos.sort(key=lambda r: (r["stargazers_count"], r["pushed_at"]), reverse=True)
+    return repos[:n]
+
+
+def repo_cards(tests):
+    picked = []
+    for r in top_repos():
+        name = r["name"]
+        if name in KNOWN:
+            desc, foot, draw = KNOWN[name]
+            footer, draw = foot(tests), globals()[draw]
+        else:
+            desc = re.sub(r"[^\x00-\u024f\u2010-\u2027]+", "", r["description"]).strip()
+            footer = [r["license"]["spdx_id"]] if r.get("license") and r["license"].get("spdx_id") not in (None, "NOASSERTION") else []
+            draw = None
+        slug = "card-" + re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+        save(slug, card(name, desc, footer, draw, r.get("language") or "Other"), name)
+        picked.append((name, slug, desc))
+    return picked
+
+
+def write_projects(picked):
+    """Rewrite the block between the repos markers in README.md to match this week's ranking."""
+    cell = ('  <a href="https://github.com/Karunya-Muddana/{name}"><picture><source media="(prefers-color-scheme: dark)" '
+            'srcset="assets/{slug}-dark.svg"><img src="assets/{slug}-light.svg" alt="{alt}" width="49%"></picture></a>')
+    rows = []
+    for i in range(0, len(picked), 2):
+        rows.append("<p>\n" + "\n".join(cell.format(name=n, slug=s, alt=escape(f"{n}: {d}", {'"': "&quot;"}))
+                                         for n, s, d in picked[i:i + 2]) + "\n</p>")
+    path = os.path.join(ROOT, "README.md")
+    text = open(path, encoding="utf-8").read()
+    start, end = "<!-- repos:start -->", "<!-- repos:end -->"
+    i, j = text.index(start) + len(start), text.index(end)
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        f.write(text[:i] + "\n" + "\n".join(rows) + "\n" + text[j:])
+
+
 # ─────────────────────────────── repo stats (graphs) ───────────────────────────────
 # Oldest first; this is also the stacking order of the growth chart.
 REPOS = [("project-smith", "project-smith", "purple"), ("ExcelMCP", "ExcelMCP", "green"),
          ("Native", "Native", "orange"), ("tareekh", "Tareekh", "blue")]
-SERIES = {"dark": dict(purple="#8c9bff", green="#4fd1b5", orange="#ffb35c", blue="#ff8a6b"),
-          "light": dict(purple="#4c5bd4", green="#0b8a74", orange="#c97a12", blue="#d4553a")}
+SERIES = {theme: dict(purple=PALETTE["red"], green=PALETTE["green"], orange=PALETTE["orange"], blue=PALETTE["blue"])
+          for theme in THEMES}
 CODE_EXT = {".py": "Python", ".ts": "TypeScript", ".tsx": "TypeScript", ".js": "JavaScript", ".jsx": "JavaScript",
             ".html": "HTML", ".css": "CSS", ".sql": "SQL", ".sh": "Shell"}
 LANG.update({"HTML": "#e34c26", "CSS": "#663399", "JavaScript": "#f1e05a", "Other": "#8b949e"})
@@ -310,18 +373,17 @@ def growth_chart(stats):
         t, col = s.t, SERIES[theme]
         s.rect(.5, .5, 839, 299, rx=24, fill="panel")
         total = sum(v["lines"] for v in stats.values())
-        s.text(24, 38, f"{k(total)} lines of code", "sans-600", 16, "fg")
+        # The shape is the point, not the count, so no line totals are printed anywhere
+        s.text(24, 38, "How the code grew", "sans-600", 16, "fg")
         start = min(dt.date.fromisoformat(v["growth"][0][0]) for v in stats.values()).replace(day=1)
         end = dt.date.today()
-        s.text(24, 58, f"Written across {len(stats)} public projects, {start:%B %Y} to {end:%B %Y}", "sans-400", 12.5, "muted")
-        x0, x1, y0, y1 = 64, 816, 92, 236
+        s.text(24, 58, f"{len(stats)} public projects, {start:%B %Y} to {end:%B %Y}", "sans-400", 12.5, "muted")
+        x0, x1, y0, y1 = 24, 816, 92, 236
         top = max(20000, -(-total // 20000) * 20000)
         days = (end - start).days
         X = lambda d: x0 + (x1 - x0) * (d - start).days / days
         Y = lambda v: y1 - (y1 - y0) * v / top
-        for v in range(0, top + 1, 20000 if top > 40000 else 10000):
-            s.add(f'<path d="M{x0} {Y(v):.1f}H{x1}" stroke="{t["border"]}" stroke-dasharray="{"0" if v == 0 else "2 4"}"/>')
-            s.text(x0 - 8, Y(v) + 3.5, f"{v // 1000}k" if v else "0", "mono-400", 10.5, "subtle", anchor="end")
+        s.add(f'<path d="M{x0} {y1}H{x1}" stroke="{t["border"]}"/>')
         m = start
         while m <= end:
             if X(m) < x1 - 20:
@@ -351,9 +413,7 @@ def growth_chart(stats):
         lx = 24
         for label, (_, _, c) in zip(stats, REPOS):
             s.add(f'<circle cx="{lx + 5}" cy="274" r="5" fill="{col[c]}"/>')
-            w = s.text(lx + 16, 278.5, label, "sans-500", 12.5, "fg")
-            w += s.text(lx + 22 + w, 278.5, k(stats[label]["lines"]), "sans-400", 12.5, "muted")
-            lx += w + 44
+            lx += s.text(lx + 16, 278.5, label, "sans-500", 12.5, "fg") + 44
         return s
     return build
 
@@ -408,109 +468,77 @@ def tests_and_languages(stats):
 
 
 # ─────────────────────────────── header, timeline, upstream ───────────────────────────────
-STATS = [("9.15", "CGPA", "B.Tech CS (AI & ML)"), ("2", "Fixes merged upstream", "IPython · git-cola"),
-         ("600+", "Students served", "by the CBSE analyzer"), ("2", "Countries with clients", "India · Germany"),
-         ("2", "Hackathon builds", "SIH 2026 · HwH 3.0")]
-
-
 def header():
     def build(theme):
-        s = Svg(840, 268, theme)
-        t, col = s.t, SERIES[theme]
-        s.rect(0, 0, 840, 268, rx=28, fill="panel")
-        # a small cluster of flat shapes on the right, one per accent
-        gx, gy, c = 676, 36, 56
-        s.add(f'<circle cx="{gx + c / 2}" cy="{gy + c / 2}" r="{c / 2}" fill="{col["green"]}"/>'
-              f'<path d="M{gx + c + 10} {gy + c}V{gy}A{c} {c} 0 0 1 {gx + 2 * c + 10} {gy + c}Z" fill="{col["blue"]}"/>'
-              f'<rect x="{gx}" y="{gy + c + 10}" width="{c}" height="{c}" rx="16" fill="{col["orange"]}"/>'
-              f'<path d="M{gx + c + 10} {gy + c + 10}H{gx + 2 * c + 10}A{c / 2} {c / 2} 0 0 1 {gx + c + 10} {gy + c + 10}Z" '
-              f'fill="{col["purple"]}" class="spin"/>')
-        s.css.append(f"@keyframes r{{0%,70%{{transform:rotate(0)}}100%{{transform:rotate(180deg)}}}}"
-                     f".spin{{transform-origin:{gx + c * 1.5 + 10}px {gy + c * 1.5 + 10}px;animation:r 6s cubic-bezier(.2,0,0,1) infinite alternate}}")
-        s.text(36, 66, "Karunya Muddana", "sans-600", 34, "fg", spacing=-.6)
-        s.text(36, 94, "AI engineer. I build LLM agents that work on real data", "sans-400", 15, "muted")
-        s.text(36, 114, "and cite where every answer came from.", "sans-400", 15, "muted")
-        chip = "Open to AI/ML internships"
-        w = measure(chip, "sans-500", 12.5) + 40
-        s.rect(36, 132, w, 30, rx=15, fill="greenBg")
-        s.add(f'<circle cx="54" cy="147" r="7" fill="{t["green"]}" class="pulse" opacity="0"/>'
-              f'<circle cx="54" cy="147" r="4" fill="{t["green"]}"/>')
-        s.css.append("@keyframes p{0%{opacity:.5;transform:scale(.6)}100%{opacity:0;transform:scale(1.7)}}"
-                     ".pulse{transform-box:fill-box;transform-origin:center;animation:p 2.4s ease-out infinite}")
-        s.text(66, 151.5, chip, "sans-500", 12.5, "green")
-        x = 36 + w + 20
-        for name, label in [("location", "Hyderabad, India"), ("mortar-board", "GITAM, class of 2029")]:
-            s.icon("oct", name, x, 140, 14, "subtle")
-            x += 20 + s.text(x + 20, 151.5, label, "sans-400", 12.5, "muted") + 20
-        # stats as tonal tiles
-        n, gap, x0 = len(STATS), 10, 24
-        tw = (840 - 2 * x0 - gap * (n - 1)) / n
-        accents = ["green", "blue", "orange", "purple", "green"]
-        for i, (num, label, note) in enumerate(STATS):
-            x = x0 + i * (tw + gap)
-            s.rect(x, 180, tw, 64, rx=16, fill="raised")
-            s.add(f'<circle cx="{x + tw - 16:.1f}" cy="196" r="4" fill="{col[accents[i]]}"/>')
-            s.text(x + 16, 210, num, "sans-600", 21, "fg", spacing=-.3)
-            s.text(x + 16, 230, label, "sans-400", 11.5, "muted")
+        s = Svg(840, 200, theme)
+        c = PALETTE
+        s.rect(0, 0, 840, 200, rx=28, fill="panel")
+        # a K in four flat pieces; the two diagonals draw in from the joint, hold, and pull back
+        jx, jy, sw = 634, 100, 36
+        arm, leg = (772, 40), (772, 160)
+        length = ((arm[0] - jx) ** 2 + (arm[1] - jy) ** 2) ** .5
+        s.add(f'<rect x="{jx - sw / 2}" y="28" width="{sw}" height="144" rx="{sw / 2}" fill="{c["blue"]}"/>'
+              f'<path d="M{jx} {jy}L{arm[0]} {arm[1]}" stroke="{c["red"]}" stroke-width="{sw}" stroke-linecap="round" '
+              f'stroke-dasharray="{length:.1f} 400" class="k k1"/>'
+              f'<path d="M{jx} {jy}L{leg[0]} {leg[1]}" stroke="{c["gold"]}" stroke-width="{sw}" stroke-linecap="round" '
+              f'stroke-dasharray="{length:.1f} 400" class="k k2"/>'
+              f'<circle cx="{jx}" cy="{jy}" r="13" fill="{c["green"]}" class="dot"/>')
+        s.css.append(f"@keyframes d{{0%{{stroke-dashoffset:{length:.1f}}}22%,82%{{stroke-dashoffset:0}}100%{{stroke-dashoffset:{length:.1f}}}}}"
+                     f"@keyframes o{{0%,100%{{transform:scale(.4)}}20%,84%{{transform:scale(1)}}}}"
+                     f".k{{animation:d 7s cubic-bezier(.2,0,0,1) infinite}}.k2{{animation-delay:.25s}}"
+                     f".dot{{transform-box:fill-box;transform-origin:center;animation:o 7s cubic-bezier(.2,0,0,1) infinite}}")
+        s.text(36, 104, "Karunya Muddana", "sans-700", 46, "fg", spacing=-1.2)
+        s.text(38, 136, "Second-year CS (AI/ML) at GITAM, Hyderabad", "sans-500", 16, "muted")
         return s
     return build
 
 
-# newest first: (when, title, tag, where, detail)
+# newest first: (when, kind, what, detail or None). Uneven on purpose: some things need a sentence, some don't.
 TIMELINE = [
-    ("Oct 2026 – now", "AI engineer, contract", "work", "Healthcare certification project · Germany (remote)",
-     "Document review that checks uploaded certificates against the application form. Caught valid phone scans "
-     "being read as expired, and added a second independent reading backed by a 33-case test set with tampered files."),
-    ("Oct 2026 – now", "Open-source contributor", "upstream", "IPython · git-cola · icalendar · scikit-learn",
-     "Two fixes merged within two weeks of the first PR, two more in review."),
-    ("Sep 2026", "Led the Tareekh team", "hackathon", "Hack with Hyderabad 3.0",
-     "Turns a lawyer's diary photos, notes and court orders into one cited memory per hearing."),
-    ("Sep 2026", "Built Native", "hackathon", "Smart India Hackathon 2026",
-     "A local-first agent workbench with 22 tools that keeps running through rate limits and works offline."),
-    ("Aug 2026", "Published engraph on PyPI", "release", "pip install engraph",
-     "Long-term memory for AI coding assistants, so the next session doesn't start from zero."),
-    ("Aug 2026", "Open-sourced ExcelMCP", "release", "MCP server · MIT",
-     "The engine behind the manufacturer's assistant: live Excel answers with the file, sheet and cell behind each number."),
-    ("2024 – now", "Freelance AI engineer", "work", "Chemical manufacturer · Hyderabad",
-     "Built an assistant that let staff question their Excel data in plain English. Used daily until the company moved to an ERP."),
-    ("2025", "House price prediction", "ml", "Ames housing dataset",
-     "Benchmarked 11 models; a tuned XGBoost reached 0.1002 log-RMSE and priced 79% of houses within 10%."),
-    ("Jun 2025", "CBSE result analyzer", "tool", "Used by teachers at two schools",
-     "Turns the board's raw gazette files into Excel and PDF reports for 600 students' results."),
-    ("2025 – 2029", "B.Tech, Computer Science (AI & ML)", "edu", "GITAM University, Hyderabad", "CGPA 9.15 / 10."),
+    ("Oct 2026", "work", "Contract AI engineer for a healthcare certifier in Germany",
+     "The system checks uploaded certificates against what applicants typed into the form. I found valid certificates "
+     "scanned with phone apps being read as expired, so good applications would have been sent back. Every document "
+     "now gets a second, independent reading, and disagreements go to a person. The test set has 33 cases, some of them "
+     "forged on purpose."),
+    ("Oct 2026", "oss", "Fixes merged into IPython and git-cola", "Two more are in review, at icalendar and scikit-learn."),
+    ("Sep 2026", "hackathon", "Led the Tareekh team at Hack with Hyderabad 3.0", "Practice memory for Indian litigators."),
+    ("Sep 2026", "hackathon", "Built Native for Smart India Hackathon 2026", "22 tools. Works with the wifi off."),
+    ("Aug 2026", "release", "Put engraph on PyPI", None),
+    ("2024", "work", "Started freelancing for a chemical manufacturer in Hyderabad",
+     "Staff asked their Excel data questions in plain English and saw the cell behind each answer. They used it every "
+     "day until the company moved to an ERP. I open-sourced the engine as ExcelMCP."),
+    ("Jun 2025", "release", "Wrote a CBSE result analyzer",
+     "A weekend favour. Teachers at two schools ran it on 600 students' board results."),
+    ("2025", "school", "Started a B.Tech at GITAM", "CGPA 9.15 so far."),
 ]
-TAGS = {"work": "green", "upstream": "purple", "hackathon": "orange", "release": "blue", "ml": "purple", "tool": "green",
-        "edu": "orange"}
+KINDS = {"work": ("blue", "work"), "oss": ("green", "open source"), "hackathon": ("orange", "hackathon"),
+         "release": ("red", "release"), "school": ("gold", "school")}
 
 
 def timeline():
     def build(theme):
-        rows = [(e, wrap(e[4], "sans-400", 12.5, 700)) for e in TIMELINE]
-        h = 70 + sum(54 + 18 * len(lines) for _, lines in rows) - 10
+        rows = [(e, wrap(e[3], "sans-400", 12.5, 640) if e[3] else []) for e in TIMELINE]
+        step = lambda lines: 38 + 18 * len(lines) + (6 if lines else 0)
+        h = 76 + sum(step(l) for _, l in rows) + 4
         s = Svg(840, h, theme)
-        t, col = s.t, SERIES[theme]
-        s.rect(.5, .5, 839, h - 1, rx=24, fill="panel")
-        s.text(28, 38, "$", "mono-400", 12, "green")
-        s.text(42, 38, "git log --graph --author=karunya", "mono-400", 12, "subtle")
-        y, rail = 70, 40
-        last = y + sum(54 + 18 * len(lines) for _, lines in rows[:-1])
-        s.add(f'<path d="M{rail} {y}V{last}" stroke="{t["border"]}" stroke-width="2"/>')
-        for i, ((when, title, tag, where, _), lines) in enumerate(rows):
-            c = col[TAGS[tag]]
-            if i == 0:
-                s.add(f'<circle cx="{rail}" cy="{y}" r="7" fill="{t["panel"]}" stroke="{c}" stroke-width="2"/>'
-                      f'<circle cx="{rail}" cy="{y}" r="3" fill="{c}"/>')
-            else:
-                s.add(f'<circle cx="{rail}" cy="{y}" r="5" fill="{t["panel"]}" stroke="{c}" stroke-width="2"/>')
-            w = s.text(64, y + 5, title, "sans-600", 15, "fg")
-            tw = measure(tag, "mono-400", 10.5) + 14
-            s.add(f'<rect x="{64 + w + 10:.1f}" y="{y - 8}" width="{tw:.1f}" height="18" rx="9" fill="{c}" fill-opacity=".14"/>')
-            s.text(64 + w + 17, y + 4.5, tag, "mono-400", 10.5, c)
-            s.text(816, y + 5, when, "mono-400", 11.5, "subtle", anchor="end")
-            s.text(64, y + 25, where, "sans-500", 12.5, "fg")
+        t = s.t
+        s.rect(0, 0, 840, h, rx=24, fill="panel")
+        lx = 816
+        for kind in reversed(list(KINDS)):
+            colour, name = KINDS[kind]
+            lx -= measure(name, "sans-400", 12, 0) + 14
+            s.add(f'<circle cx="{lx:.1f}" cy="31" r="4.5" fill="{PALETTE[colour]}"/>')
+            s.text(lx + 10, 35, name, "sans-400", 12, "muted")
+            lx -= 18
+        y, rail = 80, 132
+        s.add(f'<path d="M{rail} {y}V{y + sum(step(l) for _, l in rows[:-1])}" stroke="{t["border"]}" stroke-width="2"/>')
+        for i, ((when, kind, what, _), lines) in enumerate(rows):
+            s.text(rail - 22, y + 4.5, when, "mono-400", 11.5, "subtle", anchor="end")
+            s.add(f'<circle cx="{rail}" cy="{y}" r="5.5" fill="{PALETTE[KINDS[kind][0]]}"/>')
+            s.text(rail + 22, y + 5, what, "sans-600", 14.5, "fg")
             for j, line in enumerate(lines):
-                s.text(64, y + 44 + j * 18, line, "sans-400", 12.5, "muted")
-            y += 54 + 18 * len(lines)
+                s.text(rail + 22, y + 27 + j * 18, line, "sans-400", 12.5, "muted")
+            y += step(lines)
         return s
     return build
 
@@ -523,50 +551,64 @@ UPSTREAM = [("ipython/ipython", 15431, "Fix WebP detection and size parsing in d
             ("scikit-learn/scikit-learn", 35124, "FIX make Bunch.copy return a Bunch instead of a dict", "open")]
 
 
+def api(path):
+    req = urllib.request.Request(f"https://api.github.com/{path}", headers={"Accept": "application/vnd.github+json"})
+    if os.environ.get("GITHUB_TOKEN"):
+        req.add_header("Authorization", f"Bearer {os.environ['GITHUB_TOKEN']}")
+    with urllib.request.urlopen(req, timeout=20) as r:
+        return json.load(r)
+
+
 def fetch_prs():
     prs = []
     for repo, n, title, state in UPSTREAM:
-        req = urllib.request.Request(f"https://api.github.com/repos/{repo}/pulls/{n}",
-                                     headers={"Accept": "application/vnd.github+json"})
-        if os.environ.get("GITHUB_TOKEN"):
-            req.add_header("Authorization", f"Bearer {os.environ['GITHUB_TOKEN']}")
+        pr = dict(repo=repo, n=n, title=title, state=state, add=None, rm=None, stars=None, when=None)
         try:
-            with urllib.request.urlopen(req, timeout=20) as r:
-                pr = json.load(r)
-            title, state = pr["title"], "merged" if pr.get("merged_at") else pr["state"]
+            d = api(f"repos/{repo}/pulls/{n}")
+            pr.update(title=d["title"], state="merged" if d.get("merged_at") else d["state"],
+                      add=d["additions"], rm=d["deletions"], stars=d["base"]["repo"]["stargazers_count"],
+                      when=(d.get("merged_at") or d["created_at"])[:10])
         except Exception as e:
             print(f"keeping saved state for {repo}#{n}: {e}")
-        prs.append((repo, n, title, state))
+        prs.append(pr)
     return prs
 
 
 def upstream(prs):
-    label = {"merged": "Merged", "open": "In review", "closed": "Closed"}
-
     def build(theme):
-        h = 76 + 58 * len(prs)
+        h = 20 + 64 * len(prs)
         s = Svg(840, h, theme)
         t = s.t
-        s.rect(.5, .5, 839, h - 1, rx=24, fill="panel")
-        merged = sum(p[3] == "merged" for p in prs)
-        s.text(24, 38, f"{merged} merged, {sum(p[3] == 'open' for p in prs)} in review", "sans-600", 16, "fg")
-        s.text(24, 58, "Pull requests to libraries I use", "sans-400", 12.5, "muted")
-        for i, (repo, n, title, state) in enumerate(prs):
-            y = 76 + i * 58
+        s.rect(0, 0, 840, h, rx=24, fill="panel")
+        for i, pr in enumerate(prs):
+            y = 10 + i * 64
             if i:
                 s.add(f'<path d="M24 {y + .5}H816" stroke="{t["border"]}"/>')
-            c = {"merged": SERIES[theme]["purple"], "open": SERIES[theme]["orange"]}.get(state, t["red"])
-            s.icon("oct", "git-merge" if state == "merged" else "git-pull-request", 24, y + 14, 16, c)
-            w = s.text(52, y + 26, repo, "sans-600", 13.5, "fg")
-            s.text(52 + w + 8, y + 26, f"#{n}", "mono-400", 12, "subtle")
-            s.text(52, y + 45, title, "sans-400", 12.5, "muted")
-            lab = label.get(state, state)
-            lw = measure(lab, "sans-500", 11.5) + 20
-            s.rect(816 - lw, y + 17, lw, 23, rx=11.5, fill=c, extra=' fill-opacity=".14"')
-            s.text(816 - lw / 2, y + 32.5, lab, "sans-500", 11.5, c, anchor="middle")
+            merged = pr["state"] == "merged"
+            fill, text = ("green", "green") if merged else ("orange", "orange")
+            s.icon("oct", "git-merge" if merged else "git-pull-request", 24, y + 16, 16, PALETTE[fill])
+            w = s.text(52, y + 29, pr["repo"], "sans-600", 14, "fg")
+            w += 8 + s.text(52 + w + 8, y + 29, f"#{pr['n']}", "mono-400", 12, "subtle")
+            if pr["stars"]:
+                s.icon("oct", "star", 52 + w + 14, y + 18.5, 12, "subtle")
+                s.text(52 + w + 30, y + 29, f"{pr['stars'] / 1000:.1f}k", "sans-400", 12, "subtle")
+            s.text(52, y + 49, pr["title"], "sans-400", 12.5, "muted")
+            # status chip on the right, then the diff size to its left
+            if pr["when"]:
+                day = dt.date.fromisoformat(pr["when"])
+                lab = f"merged {day.day} {day:%b}" if merged else f"in review since {day.day} {day:%b}"
+            else:
+                lab = "merged" if merged else "in review"
+            lw = measure(lab, "sans-600", 11.5) + 22
+            s.rect(816 - lw, y + 22, lw, 24, rx=12, fill=PALETTE[fill], extra=' fill-opacity=".16"')
+            s.text(816 - lw / 2, y + 38, lab, "sans-600", 11.5, text, anchor="middle")
+            if pr["add"] is not None:
+                rm = f"−{pr['rm']}"
+                x = 816 - lw - 14
+                x -= s.text(x, y + 38, rm, "mono-400", 12, "red", anchor="end") + 8
+                s.text(x, y + 38, f"+{pr['add']}", "mono-400", 12, "green", anchor="end")
         return s
     return build
-
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
@@ -575,23 +617,11 @@ if __name__ == "__main__":
             os.remove(os.path.join(OUT, f))
     stats = collect()
     tests = {lab: v["tests"] for lab, v in stats.items()}
-    cards = {
-        "card-tareekh": card("tareekh", "Turns a lawyer's diary photos, notes and court orders into one cited memory per hearing.",
-                             ["Built at Hack with Hyderabad 3.0", f"{tests['Tareekh']} tests"], draw_tareekh),
-        "card-excelmcp": card("ExcelMCP", "An MCP server that answers questions about live Excel files in OneDrive through 14 tools.",
-                              ["MIT", f"{tests['ExcelMCP']} tests", "21-workbook eval"], draw_excel),
-        "card-native": card("Native", "An agent runtime that runs code in a sandbox and switches model provider when one is rate-limited.",
-                            ["Apache-2.0", "LangGraph", "Docker"], draw_native),
-        "card-smith": card("project-smith", "The planner turns a request into a graph of tool calls and runs independent steps in parallel.",
-                           ["MIT", f"{tests['project-smith']} tests"], draw_smith),
-    }
-    for name, build in cards.items():
-        save(name, build, name.replace("card-", ""))
-    total = sum(v["lines"] for v in stats.values())
-    save("graph-growth", growth_chart(stats), f"{k(total)} lines of code written across four public projects")
+    write_projects(repo_cards(tests))
+    save("graph-growth", growth_chart(stats), "How the code in four public projects grew over time")
     save("graph-tests-languages", tests_and_languages(stats), "Automated tests per project, and languages")
-    save("header", header(), "Karunya Muddana, AI engineer. Open to AI/ML internships.")
-    save("timeline", timeline(), "Timeline of work, releases and hackathons")
+    save("header", header(), "Karunya Muddana, second-year CS (AI/ML) at GITAM, looking for an AI/ML internship")
+    save("timeline", timeline(), "What I have worked on, newest first")
     save("upstream", upstream(fetch_prs()), "Pull requests merged into and in review at open-source libraries")
     for f in sorted(os.listdir(OUT)):
         print(f"{f:32s} {os.path.getsize(os.path.join(OUT, f)) / 1024:6.1f} KB")
