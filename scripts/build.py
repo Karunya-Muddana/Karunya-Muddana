@@ -9,6 +9,7 @@ Octicons (MIT). Sources are downloaded once into .cache/.
 """
 import ast
 import base64
+import hashlib
 import datetime as dt
 import io
 import json
@@ -610,6 +611,20 @@ def upstream(prs):
         return s
     return build
 
+def bust_caches():
+    """GitHub's image cache keeps serving old SVGs after a push, so every README link carries a hash of its file."""
+    path = os.path.join(ROOT, "README.md")
+    text = open(path, encoding="utf-8").read()
+
+    def tag(m):
+        f = os.path.join(OUT, m.group(1) + ".svg")
+        if not os.path.exists(f):
+            return m.group(0)
+        return f"assets/{m.group(1)}.svg?v={hashlib.sha1(open(f, 'rb').read()).hexdigest()[:8]}"
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        f.write(re.sub(r"assets/([\w-]+)\.svg(?:\?v=\w+)?", tag, text))
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for f in os.listdir(OUT):
@@ -623,5 +638,6 @@ if __name__ == "__main__":
     save("header", header(), "Karunya Muddana, second-year CS (AI/ML) at GITAM, looking for an AI/ML internship")
     save("timeline", timeline(), "What I have worked on, newest first")
     save("upstream", upstream(fetch_prs()), "Pull requests merged into and in review at open-source libraries")
+    bust_caches()
     for f in sorted(os.listdir(OUT)):
         print(f"{f:32s} {os.path.getsize(os.path.join(OUT, f)) / 1024:6.1f} KB")
